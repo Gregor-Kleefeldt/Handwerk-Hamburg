@@ -1,0 +1,27 @@
+# Python virtual environment
+venv/
+.venv/
+env/
+
+# Python cache and build
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+
+# IDE and OS
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.swo
+
+# Environment and secrets
+.env
+.env.local
+*.env

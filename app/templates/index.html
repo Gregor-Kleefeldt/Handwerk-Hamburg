@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>White-Spot Map Handwerk – Hamburg</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">◈</span>
+        <div>
+          <h1 class="title">White-Spot Map Handwerk</h1>
+          <p class="subtitle">Hamburg – Versorgung mit Elektro-Handwerk nach Postleitzahl</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div id="map" class="map"></div>
+    <aside id="info-panel" class="info-panel hidden" aria-label="Details zum ausgewählten Gebiet">
+      <div class="panel-inner">
+        <div class="panel-header">
+          <h2 class="panel-title">Gebietsdetails</h2>
+          <button type="button" id="close-panel" class="close-btn" aria-label="Panel schließen">Schließen</button>
+        </div>
+        <dl id="info-content" class="info-list"></dl>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="legend">
+        <span class="legend-label">White-Spot-Score</span>
+        <div class="legend-bar">
+          <span class="legend-caption legend-low">gut versorgt</span>
+          <div class="legend-gradient" role="img" aria-label="Verlauf von Grün bis Rot"></div>
+          <span class="legend-caption legend-high">unterversorgt</span>
+        </div>
+      </div>
+      <p class="data-note">Daten: Statistik Nord (Einwohner), OSM & elektriker.org (Betriebe). Stand PLZ 31.12.2024.</p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/static/map.js"></script>
+</body>
+</html>
