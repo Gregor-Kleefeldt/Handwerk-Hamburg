@@ -1,82 +1,127 @@
-# White-Spot Map Handwerk (MVP)
+# White Spot Map Handwerk
 
-A small web dashboard that shows which postal code areas in Hamburg are under-served for certain craft trades (starting with electricians). Renders a choropleth map of "white spots" based on population vs. number of businesses.
+**Analyzing and visualizing handcraft businesses in Hamburg with a Python data pipeline.**
 
-## Project structure
+---
+
+## Project Description
+
+This project analyzes and visualizes handcraft businesses in Hamburg using a **modular Python data pipeline**. It identifies postal code areas (PLZ) that are under-served for certain craft trades (e.g. electricians) by combining business locations with population data and rendering a choropleth “white spot” map. The pipeline is designed for reuse and extension to additional trades.
+
+---
+
+## Project Structure
+
+| Folder | Purpose |
+|--------|---------|
+| **`data/raw`** | Raw input data: PLZ boundaries (GeoJSON), population estimates (CSV), and external business lists (e.g. elektriker.org). |
+| **`data/processed`** | Pipeline output: scored GeoJSON for the map, Hamburg boundary, and other derived datasets. |
+| **`notebooks`** | Exploration and ad-hoc analysis in Jupyter notebooks. |
+| **`src/handwerk_hamburg`** | Reusable Python package: data loading, cleaning, geocoding, analysis, and map-ready visualization. |
+| **`scripts`** | Entry points to run the pipeline (e.g. `run_analysis.py`) and one-off tasks. |
+
+---
+
+## Data Pipeline
+
+The pipeline runs in five stages:
+
+1. **Load** — Read raw PLZ boundaries, population, and fetch businesses (e.g. Overpass API, elektriker.org).
+2. **Clean** — Merge and normalize PLZ data; geocode and validate business locations.
+3. **Transform** — Assign businesses to PLZ and prepare structures for scoring.
+4. **Analyze** — Score each area (e.g. population vs. number of businesses) to identify white spots.
+5. **Visualize** — Build map-ready GeoJSON (choropleth) for the dashboard or export.
 
 ```
-project-root/
-├── data/
-│   ├── raw/                 # Raw inputs (PLZ GeoJSON, population CSV, elektriker.org list)
-│   └── processed/            # Analysis output (scored GeoJSON, Hamburg boundary)
-├── notebooks/                # Exploration notebooks only
-├── src/
-│   └── handwerk_hamburg/     # Reusable Python package
-│       ├── __init__.py
-│       ├── config.py         # Trades, Overpass, paths
-│       ├── data_loader.py    # Load PLZ, population, electricians; fetch Overpass
-│       ├── cleaning.py       # Merge/normalize PLZ data
-│       ├── geocoding.py      # PLZ → coordinates, elektriker.org → points
-│       ├── analysis.py       # Assign businesses to PLZ, score white spots
-│       └── visualization.py  # Map-ready GeoJSON
-├── scripts/
-│   └── run_analysis.py       # Main workflow entry point
-├── tests/
-├── app/                      # Web application (FastAPI)
-│   ├── main.py
-│   ├── templates/
-│   └── static/
-├── requirements.txt
-└── README.md
+Raw Data
+   ↓
+Load
+   ↓
+Clean
+   ↓
+Transform
+   ↓
+Analyze
+   ↓
+Visualize
 ```
 
-## Setup (macOS)
+---
 
-1. Create a virtual environment and install dependencies:
+## Installation
+
+1. Clone the repository and go into the project folder:
+
+   ```bash
+   git clone https://github.com/<your-org>/white-spot-map-handwerk.git
+   cd white-spot-map-handwerk
+   ```
+
+2. (Recommended) Create and activate a virtual environment (macOS/Linux):
 
    ```bash
    python3 -m venv venv
    source venv/bin/activate
+   ```
+
+3. Install dependencies:
+
+   ```bash
    pip install -r requirements.txt
    ```
 
-2. Run the main analysis workflow (fetches OSM + elektriker.org, scores PLZ, writes GeoJSON):
+---
 
-   ```bash
-   python scripts/run_analysis.py
-   ```
+## Usage
 
-   If the Overpass API times out, the script still writes a GeoJSON with zero businesses (all areas will show as under-served). Run the script again later to refresh with live OSM data.
-
-3. Start the web app:
-
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-
-4. Open http://127.0.0.1:8000 in your browser.
-
-## Running tests
-
-From project root (with `venv` activated):
+Run the full pipeline from the project root:
 
 ```bash
-PYTHONPATH=src python -m pytest tests/ -v
+python scripts/run_analysis.py
 ```
 
-## Data sources
+**What it does:**
 
-- **Craft businesses:** OpenStreetMap via Overpass API (`craft=electrician` in Hamburg).
-- **PLZ boundaries:** Official Hamburg data from [Transparenzportal Hamburg](https://suche.transparenz.hamburg.de/dataset/postleitzahlen-hamburg2) (Postleitzahlen GeoJSON). The project uses the file in `data/raw/plz_extract/`; to refresh it, download the zip from the portal and extract `de_hh_up_postleitzahlen_EPSG_4326.json` into `data/raw/plz_extract/`, then run the data-prep script in `data/etl/fetch_hamburg_plz_data.py` to regenerate `plz_hamburg.geojson` and `plz_einwohner.csv`.
-- **Population:** No official open data exists for inhabitants per PLZ in Hamburg. The ETL uses an area-weighted estimate (total Hamburg population distributed by PLZ area). See `data/etl/fetch_hamburg_plz_data.py`.
+- Fetches electricians from the Overpass API and from the elektriker.org Hamburg list.
+- Loads PLZ boundaries and population data from `data/raw`.
+- Scores each PLZ and writes map-ready GeoJSON to `data/processed/`.
 
-## Adding more trades later
+**Output:**
 
-- Extend `src/handwerk_hamburg/config.py` with new trade keys and Overpass tag config.
-- The UI is prepared for a trade dropdown; only "Electricians" is implemented for the MVP.
+- **`data/processed/white_spot_electrician.geojson`** — Choropleth-ready GeoJSON with white-spot scores per PLZ.
+- Optional: Hamburg boundary and other derived files in `data/processed/`.
 
-## License / data
+To view the map in the browser, start the web app (if available):
 
-- Code: use as you like.
-- OSM data: © OpenStreetMap contributors, ODbL.
-- PLZ/population: replace with your chosen dataset and respect its licence.
+```bash
+uvicorn app.main:app --reload
+```
+
+Then open **http://127.0.0.1:8000**.
+
+---
+
+## Example Output
+
+After running the pipeline you can expect:
+
+- **Console:** Logs of businesses found (Overpass + elektriker.org), total count, and the path to the written GeoJSON.
+- **Map (web app):** A choropleth of Hamburg PLZ areas where under-served regions (“white spots”) are highlighted (e.g. by color intensity or a dedicated color scale).
+- **Processed data:** GeoJSON files in `data/processed/` suitable for further analysis or import into other GIS tools.
+
+---
+
+## Future Improvements
+
+- **Interactive map** — Full interactive map of all handcraft businesses (e.g. Leaflet/Mapbox) with tooltips and filters.
+- **Filtering by category** — Support multiple trades (plumbers, carpenters, etc.) with a category/trade selector.
+- **District-level analysis** — Aggregate and compare at district (Stadtteil) level in addition to PLZ.
+- **Web interface** — Optional Streamlit (or similar) app for running the pipeline and exploring results without the command line.
+
+---
+
+## License & Data
+
+- **Code:** Use as you like.
+- **OSM data:** © OpenStreetMap contributors, ODbL.
+- **PLZ/population:** Replace with your chosen dataset and respect its licence.
