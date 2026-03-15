@@ -1,0 +1,950 @@
+{
+"Dammwiesenstraße 25-29, 22045 Hamburg": [
+53.5814933,
+10.1122296
+],
+"Antonistraße 5, 20359 Hamburg": [
+53.5469186,
+9.9576903
+],
+"Essener Strasse, 22419 Hamburg": [
+53.6759443,
+10.0008952
+],
+"Wattenbergstr. 6, 21075 Hamburg": [
+53.4644762,
+9.9623484
+],
+"Am Lehmberg 4, 22143 Hamburg": [
+53.6015694,
+10.1433861
+],
+"Elisabeth-Lange-Weg 68, 21079 Hamburg": [
+53.4318167,
+9.992316
+],
+"Kampweg 7, 21035 Hamburg": [
+53.476691,
+10.19898
+],
+"Martin-Luther-Str. 12, 20459 Hamburg": [
+53.5474557,
+9.9800826
+],
+"Marienthaler Str. 30, 20535 Hamburg": [
+53.5615278,
+10.041337
+],
+"Winsbergring 2, 22525 Hamburg": [
+53.5748816,
+9.9179543
+],
+"Feldhoopstücken 60, 22529 Hamburg": [
+53.6020014,
+9.9555597
+],
+"Am Schiffbeker Berg 24, 22111 Hamburg": [
+53.5412399,
+10.0949479
+],
+"Georg-Wilhelm-Str. 265, 21107 Hamburg": [
+53.4889252,
+9.9894413
+],
+"Kollaustr. 106, 22453 Hamburg": [
+53.6091022,
+9.9595074
+],
+"Reichsbahnstr. 84, 22525 Hamburg": [
+53.5975544,
+9.9045714
+],
+"Luruper Hauptstrasse 52, 22547 Hamburg": [
+53.584862,
+9.8803433
+],
+"Am Fuchsberg 1 A, 21075 Hamburg": [
+53.4659294,
+9.9463124
+],
+"Halenseering 13 d, 22149 Hamburg": [
+53.5867464,
+10.1464999
+],
+"Carlssonweg 9a, 22147 Hamburg": [
+53.6046242,
+10.1370169
+],
+"Jahnstr. 56, 22869 Schenefeld": [
+53.6065652,
+9.8510411
+],
+"Rehrstieg 171, 21147 Hamburg": [
+53.4837912,
+9.8634594
+],
+"Nincoper Str. 47, 21129 Hamburg": [
+53.5130887,
+9.8145682
+],
+"Bremer Str. 305, 21077 Hamburg": [
+53.4397533,
+9.9445271
+],
+"Bei der Neuen Münze 15, 22145 Hamburg": [
+53.6236721,
+10.1521921
+],
+"Reetwerder 12, 21029 Hamburg": [
+53.4906829,
+10.2102431
+],
+"Höhenkamp 9, 22145 Braak": [
+53.6080794,
+10.2416231
+],
+"Kirchwerder Hausdeich 150, 21037 Hamburg": [
+53.4375108,
+10.1967056
+],
+"Norderquerweg 71, 21037 Hamburg": [
+53.4315888,
+10.1947561
+],
+"Köppenstr. 10, 22453 Hamburg": [
+53.6077882,
+9.9797284
+],
+"Glückstädter Weg 1, 22549 Hamburg": [
+53.5862971,
+9.8660469
+],
+"Reismühle 6 -8, 22087 Hamburg": [
+53.5615798,
+10.0338579
+],
+"Koopstr. 17, 20144 Hamburg": [
+53.5702992,
+9.9743096
+],
+"Lütten Damm 16, 22145 Stapelfeld": [
+53.6083232,
+10.2178069
+],
+"Borgweg 10, 22303 Hamburg": [
+53.5895325,
+10.0161782
+],
+"Großlohering 68-70, 22143 Hamburg": [
+53.6011951,
+10.1811408
+],
+"Kalvslohtwiete 8, 22457 Hamburg": [
+53.6293521,
+9.893812
+],
+"Glüsinger Str. 98, 21217 Seevetal": [
+53.4104997,
+10.0173321
+],
+"Wilhelm-Stein-Weg 26, 22339 Hamburg": [
+53.6476481,
+10.033802
+],
+"Eifflerstr. 24a, 22769 Hamburg": [
+53.5617749,
+9.958574
+],
+"Langenhorner Chaussee 155, 22415 Hamburg": [
+53.6456296,
+10.0124739
+],
+"Rahlstedter Str. 209, 22143 Hamburg": [
+53.6057181,
+10.1640305
+],
+"Schrödersweg 36, 22453 Hamburg": [
+53.6083185,
+9.9724654
+],
+"Großmannstr. 129, 20539 Hamburg": [
+53.5388227,
+10.0565584
+],
+"Neuer Wall 18, 20354 Hamburg": [
+53.552338,
+9.9917769
+],
+"Neue Gröningerstraße 13, 20457 Hamburg": [
+53.547388,
+9.995029
+],
+"Große Bleichen 8, 20354 Hamburg": [
+53.55368,
+9.9910391
+],
+"Burchardstr. 22, 20095 Hamburg": [
+53.549582,
+10.0002553
+],
+"Mönckebergstr. 11, 20095 Hamburg": [
+53.5508324,
+10.0008243
+],
+"Neuer Wall 80, 20354 Hamburg": [
+53.5506549,
+9.9873997
+],
+"Gertrudenkirchhof 10, 20095 Hamburg": [
+53.5526006,
+10.0012236
+],
+"Gerhofstr. 1-3, 20354 Hamburg": [
+53.5544493,
+9.9893037
+],
+"Bei den Mühren 82, 20457 Hamburg": [
+53.5450906,
+9.9929497
+],
+"Alter Wandrahm 12, 20457 Hamburg": [
+53.5457634,
+9.9990729
+],
+"Große Theaterstraße 3a, 20354 Hamburg": [
+53.5568125,
+9.9893323
+],
+"Fuhlentwiete 12, 20355 Hamburg": [
+53.5533643,
+9.9854511
+],
+"Ballindamm 3, 20095 Hamburg": [
+53.555256,
+10.0006486
+],
+"Axel-Springer-Platz 1, 20355 Hamburg": [
+53.5527834,
+9.9847737
+],
+"Glockengießerwall 1, 20095 Hamburg": [
+53.5529307,
+10.0046696
+],
+"Große Theaterstr. 31-35, 20354 Hamburg": [
+53.5569607,
+9.9892481
+],
+"Neustädter Str. 45, 20355 Hamburg": [
+53.5532815,
+9.9823351
+],
+"Stephansplatz 2-6, 20354 Hamburg": [
+53.5578067,
+9.9892063
+],
+"Steindamm 7, 20099 Hamburg": [
+53.5531126,
+10.0105883
+],
+"Spaldingstr. 43a, 20097 Hamburg": [
+53.5486237,
+10.0123108
+],
+"Pulverteich 13, 20099 Hamburg": [
+53.5536161,
+10.0145537
+],
+"Eichholz 56, 20459 Hamburg": [
+53.5463693,
+9.9737182
+],
+"Danziger Str. 40, 20099 Hamburg": [
+53.556636,
+10.0140224
+],
+"Norderstr. 145, 20097 Hamburg": [
+53.5507994,
+10.0175338
+],
+"Heiligengeistfeld 2, 20359 Hamburg": [
+53.5568157,
+9.9686827
+],
+"Glashüttenstr. 8, 20357 Hamburg": [
+53.5581854,
+9.9724303
+],
+"Glashüttenstraße 22 a, 20357 Hamburg": [
+53.559083,
+9.9724215
+],
+"Hammerbrookstr. 7, 20097 Hamburg": [
+53.5514643,
+10.0206755
+],
+"Feldstr. 66, 20359 Hamburg": [
+53.5563496,
+9.9701391
+],
+"An der Alster 6, 20099 Hamburg": [
+53.5614482,
+10.0143089
+],
+"Zirkusweg 2, 20359 Hamburg": [
+53.5473617,
+9.9656202
+],
+"Gotenstr. 13, 20097 Hamburg": [
+53.5493429,
+10.0242386
+],
+"Frankenstr. 12, 20097 Hamburg": [
+53.5483961,
+10.0247616
+],
+"Sternstr. 68, 20357 Hamburg": [
+53.560115,
+9.9670295
+],
+"Budapester Str. 51, 20359 Hamburg": [
+53.5559136,
+9.9639008
+],
+"Wendenstr. 6, 20097 Hamburg": [
+53.5468319,
+10.0255061
+],
+"Kampstr. 23, 20357 Hamburg": [
+53.5610704,
+9.9676351
+],
+"Heidenkampsweg 32, 20097 Hamburg": [
+53.5510526,
+10.0257089
+],
+"Bornstr. 16, 20146 Hamburg": [
+53.5679671,
+9.9815837
+],
+"Sachsenstr. 14, 20097 Hamburg": [
+53.5459043,
+10.0277218
+],
+"Schanzenstraße 12, 20357 Hamburg": [
+53.5596881,
+9.965235
+],
+"Friedrichstr. 30, 20359 Hamburg": [
+53.5483295,
+9.9601803
+],
+"Australiastr. 52a, 20457 Hamburg": [
+53.5310555,
+9.9950323
+],
+"Magdalenenstraße 25 a, 20148 Hamburg": [
+53.5695779,
+9.9978074
+],
+"Grindelallee 152, 20146 Hamburg": [
+53.5698724,
+9.9794828
+],
+"Hermann-Blohm-Str. 5, 20457 Hamburg": [
+53.5344535,
+9.9676824
+],
+"Schröderstiftstr. 34, 20146 Hamburg": [
+53.5669634,
+9.9725847
+],
+"Mittelweg 120, 20148 Hamburg": [
+53.5722736,
+9.9947998
+],
+"Uhlenhorster Weg 2, 22085 Hamburg": [
+53.5684181,
+10.0168214
+],
+"Weidenallee 2b, 20357 Hamburg": [
+53.5662557,
+9.9659346
+],
+"Hermann-Blohm-Str. 3, 20457 Hamburg": [
+53.5394773,
+9.9643714
+],
+"Koopstraße 20-22, 20144 Hamburg": [
+53.5704333,
+9.9742
+],
+"Hamburger Hochstr. 17, 20359 Hamburg": [
+53.5474658,
+9.9549651
+],
+"Vereinsstr. 18, 20357 Hamburg": [
+53.564993,
+9.9626434
+],
+"Ausschläger Weg 7, 20537 Hamburg": [
+53.5539817,
+10.0343525
+],
+"Schäferkampsallee 39, 20357 Hamburg": [
+53.5685725,
+9.9667319
+],
+"Klaus-Groth-Str. 57, 20535 Hamburg": [
+53.5559424,
+10.034528
+],
+"Reiherdamm 44, 20457 Hamburg": [
+53.529945,
+9.9701249
+],
+"Bogenallee 8, 20144 Hamburg": [
+53.5729802,
+9.976504
+],
+"Bürgerweide 62, 20535 Hamburg": [
+53.5579437,
+10.0357048
+],
+"Ausschläger Weg 88, 20537 Hamburg": [
+53.5479371,
+10.0373721
+],
+"Eiffestr. 74, 20537 Hamburg": [
+53.5522357,
+10.0380907
+],
+"Güntherstr. 67, 22087 Hamburg": [
+53.5641151,
+10.0317539
+],
+"Bürgerweide 65A, 20535 Hamburg": [
+53.5587446,
+10.036099
+],
+"Eiffestr. 78, 20537 Hamburg": [
+53.5523106,
+10.0391956
+],
+"Eimsbütteler Str. 53-55, 22769 Hamburg": [
+53.5656051,
+9.9552868
+],
+"Borgfelder Str. 83, 20537 Hamburg": [
+53.5552182,
+10.0394177
+],
+"Arndtstr. 33, 22085 Hamburg": [
+53.5744129,
+10.0178095
+],
+"Hammer Deich 10, 20537 Hamburg": [
+53.5457015,
+10.0412802
+],
+"Grevenweg 89, 20537 Hamburg": [
+53.5511629,
+10.0418576
+],
+"Humboldtstr. 33, 22083 Hamburg": [
+53.5729641,
+10.0261244
+],
+"Schenkendorfstr. 1, 22085 Hamburg": [
+53.5767008,
+10.0153421
+],
+"Grootsruhe 4, 20537 Hamburg": [
+53.5549242,
+10.0423829
+],
+"Wendenstr. 329, 20537 Hamburg": [
+53.5511621,
+10.0430149
+],
+"Uferstr. 4, 22081 Hamburg": [
+53.5669598,
+10.0317086
+],
+"Weidenstieg 8 - 10, 20259 Hamburg": [
+53.5705615,
+9.9615181
+],
+"Conventstr. 8-10, 22089 Hamburg": [
+53.5641686,
+10.0364273
+],
+"Humboldtstr. 41, 22083 Hamburg": [
+53.5734141,
+10.0257178
+],
+"Mansteinstr. 6, 20253 Hamburg": [
+53.5770356,
+9.9693859
+],
+"Dorotheenstr. 5, 22301 Hamburg": [
+53.5794795,
+10.0106103
+],
+"Sierichstr. 30, 22301 Hamburg": [
+53.5798973,
+10.0086648
+],
+"Doormannsweg 22, 20259 Hamburg": [
+53.5702478,
+9.9548685
+],
+"Große Elbstr. 59, 22767 Hamburg": [
+53.5440175,
+9.9436589
+],
+"Köhnestraße 8, 20539 Hamburg": [
+53.5367379,
+10.0392103
+],
+"Jungfrauenthal 15, 20149 Hamburg": [
+53.5810121,
+9.9867676
+],
+"Schulweg 30a, 20259 Hamburg": [
+53.5736849,
+9.9597363
+],
+"Bellevue 48, 22301 Hamburg": [
+53.5809723,
+10.0038722
+],
+"Papenstr. 27 a, 22089 Hamburg": [
+53.5655559,
+10.0399066
+],
+"Walther-Kunze-Str. 16, 22765 Hamburg": [
+53.5598916,
+9.9442272
+],
+"Eppendorfer Weg 115, 20259 Hamburg": [
+53.5753246,
+9.9621967
+],
+"Bachstr. 51, 22083 Hamburg": [
+53.5746691,
+10.0274196
+],
+"Schulweg 25, 20259 Hamburg": [
+53.5737187,
+9.958506
+],
+"Eiffestrasse 450, 20537 Hamburg": [
+53.552228,
+10.0471757
+],
+"Wandsbeker Chaussee 70, 22089 Hamburg": [
+53.5663389,
+10.040098
+],
+"Altonaer Poststr. 9, 22767 Hamburg": [
+53.5508654,
+9.9404763
+],
+"Mühlenkamp 13a, 22303 Hamburg": [
+53.5805483,
+10.011538
+],
+"Mühlenkamp 10, 22303 Hamburg": [
+53.5804753,
+10.0126578
+],
+"Wandsbeker Chaussee 82, 22089 Hamburg": [
+53.5664094,
+10.040675
+],
+"Mühlenkamp 21a, 22303 Hamburg": [
+53.5808087,
+10.0112803
+],
+"Mühlenkamp 21 a, 22303 Hamburg": [
+53.5808087,
+10.0112803
+],
+"Papenstr. 58, 22089 Hamburg": [
+53.5651686,
+10.0419392
+],
+"Bartholomäusstr. 18, 22083 Hamburg": [
+53.5742128,
+10.030671
+],
+"Große Elbstr. 117, 22767 Hamburg": [
+53.5441558,
+9.9419422
+],
+"Kreuzbrook 7, 20537 Hamburg": [
+53.5471512,
+10.0486668
+],
+"Alte Königstr. 13-15, 22767 Hamburg": [
+53.5474755,
+9.937892
+],
+"Alte Königstraße 17, 22767 Hamburg": [
+53.5474053,
+9.9383681
+],
+"Riesserstr. 3, 20535 Hamburg": [
+53.5625208,
+10.0472964
+],
+"Augustenburger Str. 39a, 22769 Hamburg": [
+53.5651789,
+9.943287
+],
+"Vierländer Damm 38, 20539 Hamburg": [
+53.5338935,
+10.0436806
+],
+"Fruchtallee 120, 20259 Hamburg": [
+53.5725097,
+9.9512142
+],
+"Große Elbstr. 45, 22767 Hamburg": [
+53.5442129,
+9.9476432
+],
+"Griesstr. 3, 20535 Hamburg": [
+53.5621867,
+10.0479738
+],
+"Osterstr. 79, 20259 Hamburg": [
+53.5752375,
+9.9549001
+],
+"Hegestr. 19, 20251 Hamburg": [
+53.5838088,
+9.9822666
+],
+"Am Weiher 16, 20255 Hamburg": [
+53.5775871,
+9.9590355
+],
+"Großmannstr. 97, 20539 Hamburg": [
+53.5430095,
+10.0422028
+],
+"Ritterstr. 16, 22089 Hamburg": [
+53.5676488,
+10.0443382
+],
+"Hintzpeterstieg 4, 20539 Hamburg": [
+53.5408369,
+10.0497405
+],
+"Wendenstr. 435, 20537 Hamburg": [
+53.5502293,
+10.0524299
+],
+"Fährstr. 72, 21107 Hamburg": [
+53.5164506,
+9.984015
+],
+"Georgswerder Bogen 4, 21109 Hamburg": [
+53.5183738,
+10.0171554
+],
+"Isekai 1, 20249 Hamburg": [
+53.5852526,
+9.9888404
+],
+"Georgswerder Bogen 13, 21109 Hamburg": [
+53.519396,
+10.0211751
+],
+"Eimsbütteler Marktplatz 1b, 20257 Hamburg": [
+53.5729851,
+9.9480942
+],
+"Semperstraße 1, 22303 Hamburg": [
+53.5844886,
+10.0116683
+],
+"Abendrothsweg 78, 20251 Hamburg": [
+53.5834009,
+9.9708275
+],
+"Marschnerstieg 7, 22081 Hamburg": [
+53.5752465,
+10.0374541
+],
+"Scheel-Plessen-Straße 7A, 22765 Hamburg": [
+53.5535998,
+9.9339494
+],
+"Waidmannstraße 8D, 22769 Hamburg": [
+53.5695841,
+9.9429353
+],
+"Fuchsloch 6, 20535 Hamburg": [
+53.5600046,
+10.0528582
+],
+"Barnerstr. 3a, 22765 Hamburg": [
+53.5557217,
+9.9337615
+],
+"Heckscherstr. 50a, 20253 Hamburg": [
+53.5822777,
+9.964442
+],
+"Ausschläger Allee 1c, 20539 Hamburg": [
+53.5335822,
+10.0484681
+],
+"Ottenser Hauptstr. 2-6, 22765 Hamburg": [
+53.5524333,
+9.933331
+],
+"Kieler Str. 103, 22769 Hamburg": [
+53.5706369,
+9.9415528
+],
+"Heußweg 114, 20255 Hamburg": [
+53.5801628,
+9.9574996
+],
+"Hoheluftchaussee 149, 20253 Hamburg": [
+53.5847605,
+9.9686702
+],
+"Maxstraße 3, 22089 Hamburg": [
+53.5687933,
+10.0496899
+],
+"Zeißstr. 54, 22765 Hamburg": [
+53.5551101,
+9.9307514
+],
+"Lutterothstraße 23, 20255 Hamburg": [
+53.5801729,
+9.9543272
+],
+"Bahrenfelder Str. 85, 22765 Hamburg": [
+53.5518404,
+9.930108
+],
+"Glindweg 15, 22303 Hamburg": [
+53.5855413,
+10.0206524
+],
+"Hellkamp 14, 20255 Hamburg": [
+53.5770262,
+9.9471907
+],
+"Fichtestr. 47, 22089 Hamburg": [
+53.5699796,
+10.0502353
+],
+"Poßmoorweg 46A, 22301 Hamburg": [
+53.587715,
+10.0133656
+],
+"Droopweg 5, 20537 Hamburg": [
+53.5533712,
+10.0586595
+],
+"Rombergstraße 14, 20255 Hamburg": [
+53.5779104,
+9.9462299
+],
+"Rothestr. 66, 22765 Hamburg": [
+53.5512427,
+9.9275999
+],
+"Selliusstr. 3, 20255 Hamburg": [
+53.5806541,
+9.9506387
+],
+"Hamburger Str. 210, 22083 Hamburg": [
+53.579338,
+10.0401616
+],
+"Gaußstr. 158, 22765 Hamburg": [
+53.5590152,
+9.9285356
+],
+"Gaußstraße 158, 22765 Hamburg": [
+53.5590152,
+9.9285356
+],
+"Völckersstr. 5, 22765 Hamburg": [
+53.5569221,
+9.9275355
+],
+"Griesstr. 83, 20535 Hamburg": [
+53.5635522,
+10.0579652
+],
+"Friedenstr. 15 A, 22089 Hamburg": [
+53.5676267,
+10.0556945
+],
+"Grundstr. 29, 20257 Hamburg": [
+53.5761181,
+9.9415271
+],
+"Sorthmannweg 8, 22529 Hamburg": [
+53.5838256,
+9.9551111
+],
+"Leverkusenstraße 29, 22761 Hamburg": [
+53.5662414,
+9.931135
+],
+"Sorthmannweg 12 a, 22529 Hamburg": [
+53.5838421,
+9.954431
+],
+"Methfesselstr. 64, 20257 Hamburg": [
+53.5798488,
+9.9464542
+],
+"Hammer Landstr. 204, 20537 Hamburg": [
+53.5538965,
+10.0631033
+],
+"Dehnhaide 31, 22081 Hamburg": [
+53.5792975,
+10.0440409
+],
+"Hammer Steindamm 35, 22089 Hamburg": [
+53.5661112,
+10.0572246
+],
+"Hanssensweg 26, 22303 Hamburg": [
+53.5879485,
+10.0225493
+],
+"Neuhöfer Str. 23, 21107 Hamburg": [
+53.5091571,
+9.9846829
+],
+"Schützenstr. 78, 22761 Hamburg": [
+53.5665556,
+9.9300431
+],
+"Reesestr. 7, 22083 Hamburg": [
+53.5816691,
+10.0406623
+],
+"Niedergeorgswerder Deich 69, 21109 Hamburg": [
+53.5117371,
+10.0206285
+],
+"Smidtstr. 15a, 20535 Hamburg": [
+53.5636669,
+10.0608552
+],
+"Ruhrstr. 27, 22761 Hamburg": [
+53.5629992,
+9.9268494
+],
+"Barmbeker Markt 31, 22081 Hamburg": [
+53.580874,
+10.0429151
+],
+"Saarlandstr. 3, 22303 Hamburg": [
+53.5857147,
+10.0332472
+],
+"Herlingsburg 16, 22529 Hamburg": [
+53.5854698,
+9.9538491
+],
+"Neumühlen 11, 22763 Hamburg": [
+53.544074,
+9.9237024
+],
+"Ludolfstr. 40, 20249 Hamburg": [
+53.5928358,
+9.9908874
+],
+"Peutestr. 53a, 20539 Hamburg": [
+53.5110895,
+10.0522631
+],
+"Menckesallee 32, 22089 Hamburg": [
+53.5678024,
+10.0595438
+],
+"Menckesallee 31, 22089 Hamburg": [
+53.5681388,
+10.0597837
+],
+"Stückenstr. 68, 22081 Hamburg": [
+53.5794979,
+10.0478697
+],
+"Schützenstr. 110, 22761 Hamburg": [
+53.5687324,
+9.9290688
+],
+"Mühlenhagen 98, 20539 Hamburg": [
+53.5379497,
+10.0637143
+],
+"Ruhrstr. 90, 22761 Hamburg": [
+53.5666775,
+9.9254391
+],
+"Gerstenkamp 19, 22081 Hamburg": [
+53.5807381,
+10.0484485
+],
+"Flachsland 35, 22083 Hamburg": [
+53.5842446,
+10.0431266
+],
+"Wieckstr. 20, 22527 Hamburg": [
+53.5833878,
+9.9423688
+],
+"Wieckstraße 20, 22527 Hamburg": [
+53.5833878,
+9.9423688
+],
+"Platanenallee 2a, 22529 Hamburg": [
+53.591341,
+9.9631008
+],
+"Ruhrstr. 112, 22761 Hamburg": [
+53.5624254,
+9.9274787
+],
+"Tarpenbekstr. 63, 20251 Hamburg": [
+53.5953649,
+9.9835753
+],
+"Mühlenstieg 9, 22041 Hamburg": [
+53.5729877,
+10.0607598
+],
+"Behrkampsweg 48, 22529 Hamburg": [
+53.5932337,
+9.9663082
+],
+"Grete-Zabe-Weg 9, 22081 Hamburg": [
+53.5788397,
+10.0558061
+],
+"Rimbertweg 15 B, 22529 Hamburg": [
+53.5901367,
+9.9553247
+],
+"Stresemannstr. 375, 22761 Hamburg": [
+53.564622,
+9.9207876
+]
+}

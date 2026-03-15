@@ -54,10 +54,11 @@ function tooltipContent(props) {
   );
 }
 
-// Fill info panel and show it
+// Fill info panel and show it; hide the map hint
 function showInfoPanel(props) {
   var panel = document.getElementById("info-panel");
   var content = document.getElementById("info-content");
+  var hint = document.getElementById("map-hint");
   if (!panel || !content) return;
   content.innerHTML = "";
   var labels = {
@@ -74,15 +75,19 @@ function showInfoPanel(props) {
     dt.textContent = labels[key] || key;
     content.appendChild(dt);
     var dd = document.createElement("dd");
+    dd.setAttribute("data-key", key);
     dd.textContent = props[key] != null ? props[key] : "–";
     content.appendChild(dd);
   });
   panel.classList.remove("hidden");
+  if (hint) hint.classList.add("hidden");
 }
 
 function hideInfoPanel() {
   var panel = document.getElementById("info-panel");
+  var hint = document.getElementById("map-hint");
   if (panel) panel.classList.add("hidden");
+  if (hint) hint.classList.remove("hidden");
 }
 
 // Currently highlighted district layer (so we can reset its style when another is clicked)

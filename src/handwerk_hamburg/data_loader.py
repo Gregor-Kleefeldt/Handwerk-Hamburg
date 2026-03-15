@@ -207,6 +207,31 @@ def _build_overpass_query(bbox: tuple, tag_key: str, tag_value: str) -> str:
     return query
 
 
+def _address_from_osm_tags(tags: dict) -> str | None:
+    """
+    Build a single-line address string from OSM addr:* tags.
+    Returns None if no address parts are present.
+    """
+    if not tags:
+        return None
+    parts = []
+    # Street and house number (common variants)
+    street = tags.get("addr:street") or tags.get("street")
+    housenumber = tags.get("addr:housenumber") or tags.get("housenumber")
+    if street:
+        parts.append(f"{street}{' ' + str(housenumber) if housenumber else ''}".strip())
+    elif housenumber:
+        parts.append(str(housenumber))
+    # Postcode and city
+    postcode = tags.get("addr:postcode") or tags.get("postal_code")
+    city = tags.get("addr:city") or tags.get("city")
+    if postcode or city:
+        parts.append(", ".join(filter(None, [str(postcode).strip() if postcode else None, str(city).strip() if city else None])))
+    if not parts:
+        return None
+    return ", ".join(parts)
+
+
 def fetch_businesses_overpass(trade_id: str = "electrician") -> list[dict]:
     """
     Fetch businesses for the given trade from OpenStreetMap via Overpass API.
@@ -215,7 +240,7 @@ def fetch_businesses_overpass(trade_id: str = "electrician") -> list[dict]:
         trade_id: Trade key from config TRADES (e.g. 'electrician').
 
     Returns:
-        List of dicts with 'lon', 'lat', 'osm_type', 'osm_id'.
+        List of dicts with 'lon', 'lat', 'osm_type', 'osm_id', and optional 'name', 'address'.
 
     Raises:
         ValueError: If trade_id is not in TRADES.
@@ -239,10 +264,15 @@ def fetch_businesses_overpass(trade_id: str = "electrician") -> list[dict]:
             lon = el["center"].get("lon")
             lat = el["center"].get("lat")
         if lon is not None and lat is not None:
+            tags = el.get("tags") or {}
+            name = tags.get("name")
+            address = _address_from_osm_tags(tags)
             features.append({
                 "lon": float(lon),
                 "lat": float(lat),
                 "osm_type": el.get("type"),
                 "osm_id": el.get("id"),
+                "name": name,
+                "address": address,
             })
     return features

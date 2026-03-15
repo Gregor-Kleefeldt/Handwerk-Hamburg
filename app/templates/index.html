@@ -24,7 +24,10 @@
   </header>
 
   <main class="main">
-    <div id="map" class="map"></div>
+    <div class="map-wrap">
+      <div id="map" class="map"></div>
+      <p id="map-hint" class="map-hint" aria-live="polite">Klicken Sie auf einen Stadtteil für Details</p>
+    </div>
     <aside id="info-panel" class="info-panel hidden" aria-label="Details zum ausgewählten Gebiet">
       <div class="panel-inner">
         <div class="panel-header">
@@ -45,6 +48,7 @@
           <div class="legend-gradient" role="img" aria-label="Verlauf von Grün bis Rot"></div>
           <span class="legend-caption legend-high">unterversorgt</span>
         </div>
+        <p class="legend-hint">Grün = gute Versorgung, Rot = Unterversorgung mit Elektro-Handwerk.</p>
       </div>
       <p class="data-note">Daten: Statistik Nord (Einwohner), OSM & elektriker.org (Betriebe). Stand PLZ 31.12.2024.</p>
     </div>
