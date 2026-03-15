@@ -5398,9 +5398,9 @@
         "plz": "20253",
         "inhabitants": 14341,
         "stadtteil": "Hoheluft-West",
-        "business_count": 4,
-        "people_per_business": 3585.2,
-        "white_spot_score": 0.0471
+        "business_count": 3,
+        "people_per_business": 4780.3,
+        "white_spot_score": 0.0628
       }
     },
     {
@@ -6372,9 +6372,9 @@
         "plz": "20255",
         "inhabitants": 5762,
         "stadtteil": "Eimsbüttel",
-        "business_count": 7,
-        "people_per_business": 823.1,
-        "white_spot_score": 0.0108
+        "business_count": 6,
+        "people_per_business": 960.3,
+        "white_spot_score": 0.0126
       }
     },
     {
@@ -9726,9 +9726,9 @@
         "plz": "20257",
         "inhabitants": 5581,
         "stadtteil": "Eimsbüttel",
-        "business_count": 5,
-        "people_per_business": 1116.2,
-        "white_spot_score": 0.0147
+        "business_count": 4,
+        "people_per_business": 1395.2,
+        "white_spot_score": 0.0183
       }
     },
     {
@@ -10816,9 +10816,9 @@
         "plz": "20259",
         "inhabitants": 7425,
         "stadtteil": "Eimsbüttel",
-        "business_count": 8,
-        "people_per_business": 928.1,
-        "white_spot_score": 0.0122
+        "business_count": 7,
+        "people_per_business": 1060.7,
+        "white_spot_score": 0.0139
       }
     },
     {
@@ -17282,9 +17282,9 @@
         "plz": "20535",
         "inhabitants": 6327,
         "stadtteil": "Hamm",
-        "business_count": 11,
-        "people_per_business": 575.2,
-        "white_spot_score": 0.0076
+        "business_count": 9,
+        "people_per_business": 703.0,
+        "white_spot_score": 0.0092
       }
     },
     {
@@ -22076,9 +22076,9 @@
         "plz": "21031",
         "inhabitants": 6037,
         "stadtteil": "Altengamme",
-        "business_count": 3,
-        "people_per_business": 2012.3,
-        "white_spot_score": 0.0264
+        "business_count": 0,
+        "people_per_business": 6037.0,
+        "white_spot_score": 0.0793
       }
     },
     {
@@ -22714,9 +22714,9 @@
         "plz": "22083",
         "inhabitants": 8356,
         "stadtteil": "Eilbek",
-        "business_count": 8,
-        "people_per_business": 1044.5,
-        "white_spot_score": 0.0137
+        "business_count": 7,
+        "people_per_business": 1193.7,
+        "white_spot_score": 0.0157
       }
     },
     {
@@ -24404,7 +24404,7 @@
         "plz": "21033",
         "inhabitants": 11078,
         "stadtteil": "Kirchwerder",
-        "business_count": 1,
+        "business_count": 0,
         "people_per_business": 11078.0,
         "white_spot_score": 0.1455
       }
@@ -50188,9 +50188,9 @@
         "plz": "22041",
         "inhabitants": 13838,
         "stadtteil": "Barmbek-Nord",
-        "business_count": 2,
-        "people_per_business": 6919.0,
-        "white_spot_score": 0.0909
+        "business_count": 1,
+        "people_per_business": 13838.0,
+        "white_spot_score": 0.1817
       }
     },
     {
@@ -56996,7 +56996,7 @@
         "plz": "22047",
         "inhabitants": 8245,
         "stadtteil": "Wandsbek",
-        "business_count": 1,
+        "business_count": 0,
         "people_per_business": 8245.0,
         "white_spot_score": 0.1083
       }
@@ -58210,7 +58210,7 @@
         "plz": "22049",
         "inhabitants": 8188,
         "stadtteil": "Dulsberg",
-        "business_count": 1,
+        "business_count": 0,
         "people_per_business": 8188.0,
         "white_spot_score": 0.1075
       }
@@ -75584,7 +75584,7 @@
         "plz": "22159",
         "inhabitants": 25709,
         "stadtteil": "Rahlstedt",
-        "business_count": 1,
+        "business_count": 0,
         "people_per_business": 25709.0,
         "white_spot_score": 0.3376
       }
@@ -82484,7 +82484,7 @@
         "plz": "22305",
         "inhabitants": 4132,
         "stadtteil": "Wandsbek",
-        "business_count": 1,
+        "business_count": 0,
         "people_per_business": 4132.0,
         "white_spot_score": 0.0543
       }
@@ -94120,7 +94120,7 @@
         "plz": "22359",
         "inhabitants": 17031,
         "stadtteil": "Fuhlsbüttel",
-        "business_count": 1,
+        "business_count": 0,
         "people_per_business": 17031.0,
         "white_spot_score": 0.2237
       }
@@ -115920,7 +115920,7 @@
         "plz": "22453",
         "inhabitants": 31370,
         "stadtteil": "Eppendorf",
-        "business_count": 1,
+        "business_count": 0,
         "people_per_business": 31370.0,
         "white_spot_score": 0.412
       }
@@ -127982,9 +127982,9 @@
         "plz": "22529",
         "inhabitants": 46108,
         "stadtteil": "Niendorf",
-        "business_count": 8,
-        "people_per_business": 5763.5,
-        "white_spot_score": 0.0757
+        "business_count": 7,
+        "people_per_business": 6586.9,
+        "white_spot_score": 0.0865
       }
     },
     {
@@ -129120,9 +129120,9 @@
         "plz": "22547",
         "inhabitants": 12898,
         "stadtteil": "Lurup",
-        "business_count": 2,
-        "people_per_business": 6449.0,
-        "white_spot_score": 0.0847
+        "business_count": 1,
+        "people_per_business": 12898.0,
+        "white_spot_score": 0.1694
       }
     },
     {
@@ -139404,9 +139404,9 @@
         "plz": "22525",
         "inhabitants": 42631,
         "stadtteil": "Eidelstedt",
-        "business_count": 3,
-        "people_per_business": 14210.3,
-        "white_spot_score": 0.1866
+        "business_count": 2,
+        "people_per_business": 21315.5,
+        "white_spot_score": 0.2799
       }
     },
     {
@@ -143474,9 +143474,9 @@
         "plz": "22761",
         "inhabitants": 23517,
         "stadtteil": "Altona-Altstadt",
-        "business_count": 8,
-        "people_per_business": 2939.6,
-        "white_spot_score": 0.0386
+        "business_count": 7,
+        "people_per_business": 3359.6,
+        "white_spot_score": 0.0441
       }
     },
     {
@@ -148382,9 +148382,9 @@
         "plz": "21079",
         "inhabitants": 37911,
         "stadtteil": "Marmstorf / Eißendorf",
-        "business_count": 2,
-        "people_per_business": 18955.5,
-        "white_spot_score": 0.249
+        "business_count": 1,
+        "people_per_business": 37911.0,
+        "white_spot_score": 0.4979
       }
     },
     {
@@ -163620,9 +163620,9 @@
         "plz": "22549",
         "inhabitants": 8658,
         "stadtteil": "Sülldorf",
-        "business_count": 2,
-        "people_per_business": 4329.0,
-        "white_spot_score": 0.0569
+        "business_count": 1,
+        "people_per_business": 8658.0,
+        "white_spot_score": 0.1137
       }
     },
     {
