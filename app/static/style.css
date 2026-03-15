@@ -81,15 +81,181 @@ body {
   font-weight: 400;
 }
 
-/* Main: map + optional side panel */
+/* Main: address search above, then map + side panels */
 .main {
   display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 0;
   min-height: 400px;
   padding: 1rem 1rem 1rem 1rem;
   gap: 0;
+}
+
+/* Wrapper for map and side panels (row layout) */
+.main-content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
   align-items: stretch;
+}
+
+/* Address search: in flow above the map (full width bar) */
+.address-search-wrap {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
+  background: var(--color-bg-panel);
+  padding: 0.75rem 1rem 1rem 1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 0.5rem;
+}
+.address-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: var(--color-text);
+  margin-bottom: 0.35rem;
+}
+.address-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+/* Wrapper so suggestions dropdown is positioned under the input */
+.address-input-wrap {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+.address-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-btn);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.address-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
+}
+/* Address suggestions dropdown (Google Maps–style) */
+.address-suggestions {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  margin-top: 2px;
+  padding: 0;
+  list-style: none;
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-btn);
+  box-shadow: var(--shadow-md);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+.address-suggestions.is-visible {
+  display: block;
+}
+.address-suggestions[hidden] {
+  display: none !important;
+}
+.address-suggestions li {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-sans);
+}
+.address-suggestions li:last-child {
+  border-bottom: none;
+}
+.address-suggestions li:hover,
+.address-suggestions li[aria-selected="true"] {
+  background: rgba(13, 148, 136, 0.12);
+}
+.address-suggestions li[role="option"] {
+  color: var(--color-text);
+}
+.address-suggestions-loading {
+  color: var(--color-text-muted);
+  cursor: default;
+  pointer-events: none;
+}
+.address-btn {
+  padding: 0.5rem 1rem;
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-btn);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.address-btn:hover {
+  background: var(--color-accent-hover);
+}
+.address-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.address-hint {
+  margin: 0.35rem 0 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* Address result panel (same style as info-panel) */
+.address-result-panel {
+  width: 340px;
+  flex-shrink: 0;
+  background: var(--color-bg-panel);
+  border-left: 1px solid var(--color-border);
+  box-shadow: -4px 0 24px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: panelSlideIn var(--transition-panel) ease;
+}
+.address-result-panel.hidden {
+  display: none;
+}
+.address-result-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+.address-result-content .district-name {
+  font-weight: 700;
+  color: var(--color-header);
+}
+.address-result-content .business-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
+.address-result-content .business-list li {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.9375rem;
+}
+.address-result-content .business-list li:last-child {
+  border-bottom: none;
+}
+.address-result-content .error-msg {
+  color: var(--color-score-high);
+  font-size: 0.9375rem;
 }
 
 /* Map sits in a card-like container for clearer focus */

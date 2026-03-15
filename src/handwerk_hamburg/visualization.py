@@ -158,6 +158,63 @@ def create_handwerk_map(
     return out_path
 
 
+def create_electrician_heatmap(
+    df: pd.DataFrame,
+    output_path: str | Path = "outputs/electrician_heatmap.html",
+) -> Path:
+    """
+    Create a density heatmap of electrician businesses in Hamburg and save to HTML.
+
+    Uses folium and folium.plugins.HeatMap to show where electricians are concentrated.
+    Rows with missing or non-numeric latitude/longitude are dropped before building
+    the heatmap. The map is centered on Hamburg with zoom level 11–12.
+
+    Args:
+        df: DataFrame with latitude and longitude (columns 'lat'/'latitude' and 'lon'/'longitude').
+        output_path: Path for the output HTML file. Defaults to outputs/electrician_heatmap.html.
+
+    Returns:
+        Resolved Path where the map was saved.
+
+    Raises:
+        ImportError: If folium is not installed.
+    """
+    # Lazy import so folium is only required when creating the map
+    import folium
+    from folium.plugins import HeatMap
+
+    # Resolve output path and ensure parent directory (e.g. outputs/) exists
+    out_path = Path(output_path).resolve()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Normalize column names so we can use lat/lon (same logic as create_handwerk_map)
+    normalized = _normalize_df_columns(df)
+
+    # Require standard lat/lon columns after normalization
+    if "lat" not in normalized.columns or "lon" not in normalized.columns:
+        raise ValueError(
+            "DataFrame must contain latitude and longitude columns (e.g. 'lat'/'latitude', 'lon'/'longitude')."
+        )
+
+    # Drop rows where latitude or longitude is missing
+    with_coords = normalized.dropna(subset=["lat", "lon"])
+    # Ensure coordinates are numeric (non-numeric become NaN and are dropped)
+    with_coords = with_coords.loc[
+        pd.to_numeric(with_coords["lat"], errors="coerce").notna()
+        & pd.to_numeric(with_coords["lon"], errors="coerce").notna()
+    ]
+    # Build list of [lat, lon] for HeatMap; empty list is safe (folium still creates the map)
+    heat_data = with_coords[["lat", "lon"]].astype(float).values.tolist()
+
+    # Create map centered on Hamburg with zoom level 11–12
+    m = folium.Map(location=HAMBURG_CENTER, zoom_start=HAMBURG_ZOOM)
+    # Add heatmap layer showing density of electricians
+    HeatMap(heat_data).add_to(m)
+
+    m.save(str(out_path))
+    return out_path
+
+
 def build_map_geojson(geojson_dict: dict) -> dict:
     """
     Prepare scored GeoJSON for map display (choropleth).

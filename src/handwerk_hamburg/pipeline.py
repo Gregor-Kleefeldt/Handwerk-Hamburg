@@ -17,12 +17,20 @@ from handwerk_hamburg.config import (
 from handwerk_hamburg.data_loader import fetch_businesses_overpass
 from handwerk_hamburg.geocoding import businesses_from_elektriker_org
 from handwerk_hamburg.analysis import run_scoring
-from handwerk_hamburg.visualization import build_map_geojson, create_handwerk_map
+from handwerk_hamburg.visualization import (
+    build_map_geojson,
+    create_electrician_heatmap,
+    create_handwerk_map,
+)
 
 # Output file name for scored GeoJSON under data/processed
 OUTPUT_GEOJSON_FILENAME = "white_spot_electrician.geojson"
+# Output file for electricians list (used by web app address analysis)
+OUTPUT_ELECTRICIANS_FILENAME = "electricians.json"
 # Output path for the interactive business map (relative to project root)
 OUTPUT_MAP_PATH = "outputs/handwerk_map.html"
+# Output path for the electrician density heatmap (relative to project root)
+OUTPUT_HEATMAP_PATH = "outputs/electrician_heatmap.html"
 
 
 def businesses_to_dataframe(businesses: list[dict]) -> pd.DataFrame:
@@ -65,7 +73,7 @@ def run_pipeline(project_root: Path | None = None) -> dict:
         project_root: Project root directory. If None, uses get_project_root() (must have been set).
 
     Returns:
-        Dict with keys 'geojson' (the scored GeoJSON), 'geojson_path', 'map_path'.
+        Dict with keys 'geojson' (the scored GeoJSON), 'geojson_path', 'map_path', 'heatmap_path'.
     """
     # Set project root so config can resolve data/raw and data/processed
     if project_root is not None:
@@ -100,9 +108,22 @@ def run_pipeline(project_root: Path | None = None) -> dict:
     df = businesses_to_dataframe(businesses)
     map_path = root / OUTPUT_MAP_PATH
     create_handwerk_map(df, output_path=map_path)
+    # Generate electrician density heatmap after the main map
+    heatmap_path = root / OUTPUT_HEATMAP_PATH
+    create_electrician_heatmap(df, output_path=heatmap_path)
+
+    # Write electricians list for web app address-based district analysis (lat, lon, name, address)
+    electricians_path = processed_dir / OUTPUT_ELECTRICIANS_FILENAME
+    electricians_export = [
+        {"lat": b.get("lat"), "lon": b.get("lon"), "name": b.get("name"), "address": b.get("address")}
+        for b in businesses
+    ]
+    with open(electricians_path, "w", encoding="utf-8") as f:
+        json.dump(electricians_export, f, ensure_ascii=False, indent=2)
 
     return {
         "geojson": map_geojson,
         "geojson_path": geojson_path,
         "map_path": map_path,
+        "heatmap_path": heatmap_path,
     }

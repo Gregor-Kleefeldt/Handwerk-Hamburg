@@ -24,11 +24,23 @@
   </header>
 
   <main class="main">
-    <div class="map-wrap">
-      <div id="map" class="map"></div>
-      <p id="map-hint" class="map-hint" aria-live="polite">Klicken Sie auf einen Stadtteil für Details</p>
+    <div class="address-search-wrap">
+      <label for="address-input" class="address-label">Adresse in Hamburg</label>
+      <div class="address-row">
+        <div class="address-input-wrap">
+          <input type="text" id="address-input" class="address-input" placeholder="z. B. Max-Brauer-Allee 10, Hamburg" aria-describedby="address-hint" aria-autocomplete="list" aria-controls="address-suggestions-list" aria-expanded="false" />
+          <ul id="address-suggestions-list" class="address-suggestions" role="listbox" aria-label="Adressvorschläge" hidden></ul>
+        </div>
+        <button type="button" id="address-search-btn" class="address-btn">Analysieren</button>
+      </div>
+      <p id="address-hint" class="address-hint">Geben Sie eine Adresse ein, um die Elektriker-Statistik für Ihren Stadtteil zu sehen.</p>
     </div>
-    <aside id="info-panel" class="info-panel hidden" aria-label="Details zum ausgewählten Gebiet">
+    <div class="main-content">
+      <div class="map-wrap">
+        <div id="map" class="map"></div>
+        <p id="map-hint" class="map-hint" aria-live="polite">Klicken Sie auf einen Stadtteil für Details</p>
+      </div>
+      <aside id="info-panel" class="info-panel hidden" aria-label="Details zum ausgewählten Gebiet">
       <div class="panel-inner">
         <div class="panel-header">
           <h2 class="panel-title">Gebietsdetails</h2>
@@ -36,7 +48,17 @@
         </div>
         <dl id="info-content" class="info-list"></dl>
       </div>
-    </aside>
+      </aside>
+      <aside id="address-result-panel" class="address-result-panel hidden" aria-label="Ergebnis der Adressanalyse">
+        <div class="panel-inner">
+          <div class="panel-header">
+            <h2 class="panel-title">Elektriker in Ihrem Stadtteil</h2>
+            <button type="button" id="close-address-panel" class="close-btn" aria-label="Panel schließen">Schließen</button>
+          </div>
+          <div id="address-result-content"></div>
+        </div>
+      </aside>
+    </div>
   </main>
 
   <footer class="footer">
@@ -50,11 +72,12 @@
         </div>
         <p class="legend-hint">Grün = gute Versorgung, Rot = Unterversorgung mit Elektro-Handwerk.</p>
       </div>
-      <p class="data-note">Daten: Statistik Nord (Einwohner), OSM & elektriker.org (Betriebe). Stand PLZ 31.12.2024.</p>
+      <p class="data-note">Daten: Statistik Nord (Einwohner), OSM & elektriker.org (Betriebe). Stadtteilgrenzen: ALKIS Verwaltungsgrenzen (LGV Hamburg). Stand PLZ 31.12.2024.</p>
     </div>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
   <script src="/static/map.js"></script>
 </body>
 </html>

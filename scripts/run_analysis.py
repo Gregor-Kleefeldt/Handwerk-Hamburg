@@ -3,7 +3,8 @@ Run the main White-Spot analysis workflow.
 
 Fetches electricians from Overpass and elektriker.org, loads PLZ + population,
 scores areas, writes the result GeoJSON to data/processed/, and generates
-the interactive handcraft map at outputs/handwerk_map.html.
+the interactive handcraft map (outputs/handwerk_map.html) and the electrician
+density heatmap (outputs/electrician_heatmap.html).
 
 Usage (from project root):
     python scripts/run_analysis.py
@@ -26,7 +27,9 @@ def main() -> None:
     print("Loading PLZ data and computing scores...")
     result = run_pipeline(project_root=PROJECT_ROOT)
     print(f"Wrote {result['geojson_path']}")
+    print(f"Wrote electricians list to data/processed/electricians.json (for web address analysis)")
     print(f"Wrote {result['map_path']}")
+    print(f"Wrote {result['heatmap_path']}")
 
 
 if __name__ == "__main__":

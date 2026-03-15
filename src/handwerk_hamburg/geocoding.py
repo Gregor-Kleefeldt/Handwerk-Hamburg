@@ -120,6 +120,141 @@ def geocode_address(address: str) -> tuple[float, float] | None:
     return (lat, lon)
 
 
+# Timestamp of last Nominatim request (for rate limiting in search)
+_last_nominatim_request: float = 0
+
+
+def _short_address_label(address: dict, fallback: str) -> str:
+    """
+    Build a short address string: street + number, city.
+    Uses Nominatim address dict (road, house_number, city/town/state).
+    If address dict is empty or missing parts, parses display_name to get first part + Hamburg.
+    """
+    if not address:
+        return _short_address_from_display_name(fallback)
+
+    road = (
+        (address.get("road") or address.get("street") or address.get("pedestrian") or "")
+        .strip()
+    )
+    house_number = (address.get("house_number") or address.get("housenumber") or "").strip()
+    city = (
+        (
+            address.get("city")
+            or address.get("town")
+            or address.get("village")
+            or address.get("municipality")
+            or address.get("state")
+            or ""
+        )
+        .strip()
+    )
+    street_part = " ".join(filter(None, [road, house_number])).strip() or road
+    if street_part and city:
+        return f"{street_part}, {city}"
+    if street_part:
+        return street_part
+    if city:
+        return city
+    return _short_address_from_display_name(fallback)
+
+
+def _short_address_from_display_name(display_name: str) -> str:
+    """
+    Derive a short label from full display_name when address details are missing.
+    Uses first segment (street/number) and 'Hamburg' if present in the string.
+    """
+    s = (display_name or "").strip()
+    if not s:
+        return s
+    parts = [p.strip() for p in s.split(",") if p.strip()]
+    if not parts:
+        return s
+    street_part = parts[0]
+    if "Hamburg" in s:
+        return f"{street_part}, Hamburg"
+    if len(parts) >= 2:
+        return f"{street_part}, {parts[-1]}"
+    return street_part
+
+
+def nominatim_search(query: str, limit: int = 8) -> list[dict]:
+    """
+    Call Nominatim search API to get address suggestions (autocomplete).
+    Returns list of dicts with "display_name" and optionally "lat", "lon".
+    Respects 1 request/second policy. Prefers results within Hamburg viewbox.
+
+    Args:
+        query: User-typed search string (e.g. "Max-Brauer" or "Altona").
+        limit: Max number of suggestions to return (default 8).
+
+    Returns:
+        List of {"display_name": str, "lat": float, "lon": float} for each result.
+    """
+    global _last_nominatim_request
+    q = (query or "").strip()
+    if not q:
+        return []
+    # Build viewbox from Hamburg bbox: Nominatim expects "min_lon,min_lat,max_lon,max_lat"
+    min_lon, min_lat, max_lon, max_lat = HAMBURG_BBOX
+    viewbox = f"{min_lon},{min_lat},{max_lon},{max_lat}"
+
+    def _request(params: dict) -> list:
+        """Perform one Nominatim request; return list of result dicts."""
+        global _last_nominatim_request
+        now = time.time()
+        elapsed = now - _last_nominatim_request
+        if elapsed < NOMINATIM_DELAY_SECONDS:
+            time.sleep(NOMINATIM_DELAY_SECONDS - elapsed)
+        try:
+            resp = requests.get(
+                NOMINATIM_URL,
+                params={
+                    **params,
+                    "q": q,
+                    "format": "json",
+                    "limit": limit,
+                    "addressdetails": 1,
+                },
+                headers={"User-Agent": GEOCODE_USER_AGENT},
+                timeout=8,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            _last_nominatim_request = time.time()
+        except Exception:
+            return []
+        if not data or not isinstance(data, list):
+            return []
+        out = []
+        for item in data:
+            try:
+                display_name = item.get("display_name")
+                lat = float(item.get("lat"))
+                lon = float(item.get("lon"))
+            except (TypeError, ValueError):
+                continue
+            if not display_name:
+                continue
+            # Build short label: street + number, city (for dropdown display)
+            label = _short_address_label(item.get("address") or {}, display_name)
+            out.append({
+                "display_name": display_name,
+                "label": label,
+                "lat": lat,
+                "lon": lon,
+            })
+        return out
+
+    # Prefer results in Hamburg; fall back to Germany-wide if none
+    params = {"viewbox": viewbox, "bounded": 0, "countrycodes": "de"}
+    out = _request(params)
+    if not out:
+        params = {"countrycodes": "de"}
+        out = _request(params)
+    return out
+
+
 def resolve_plz_to_coords(
     plz: str,
     centroids: dict[str, tuple[float, float]] | None = None,
