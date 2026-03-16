@@ -3,6 +3,7 @@
 /* Design tokens */
 :root {
   --color-bg: #f0eeeb;
+  --color-bg-footer: #e8e6e3;
   --color-bg-panel: #ffffff;
   --color-header: #0f172a;
   --color-header-subtle: rgba(255, 255, 255, 0.85);
@@ -40,6 +41,28 @@ body {
   flex-direction: column;
 }
 
+/* Skip link: visible on focus for keyboard users */
+.skip-link {
+  position: absolute;
+  top: -3rem;
+  left: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--color-accent);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-btn);
+  z-index: 10000;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
 /* Header – subtle gradient for depth */
 .header {
   padding: 1.25rem 1.5rem;
@@ -61,10 +84,21 @@ body {
 }
 
 .brand-icon {
-  font-size: 1.5rem;
   color: var(--color-accent);
   line-height: 1;
   margin-top: 0.1rem;
+  flex-shrink: 0;
+}
+.brand-icon svg {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+}
+.tagline {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
 }
 
 .title {
@@ -88,8 +122,20 @@ body {
   flex: 1;
   min-height: 0;
   min-height: 400px;
-  padding: 1rem 1rem 1rem 1rem;
-  gap: 0;
+  padding: 1.25rem 1.5rem;
+  width: 100%;
+}
+
+/* Constrain width to align with header; center on large screens */
+.main-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 1rem;
 }
 
 /* Wrapper for map and side panels (row layout) */
@@ -109,7 +155,6 @@ body {
   padding: 0.75rem 1rem 1rem 1rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
-  margin-bottom: 0.5rem;
 }
 .address-label {
   display: block;
@@ -132,12 +177,14 @@ body {
 .address-input {
   width: 100%;
   padding: 0.5rem 0.75rem;
+  min-height: 44px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-btn);
   font-family: var(--font-sans);
   font-size: 0.9375rem;
   min-width: 0;
   box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .address-input:focus {
   outline: none;
@@ -193,6 +240,7 @@ body {
 }
 .address-btn {
   padding: 0.5rem 1rem;
+  min-height: 44px;
   background: var(--color-accent);
   color: #fff;
   border: none;
@@ -202,13 +250,37 @@ body {
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
-.address-btn:hover {
+.address-btn:hover:not(:disabled) {
   background: var(--color-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35);
 }
 .address-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+.address-btn.is-loading {
+  position: relative;
+  color: transparent;
+}
+.address-btn.is-loading::after {
+  content: "";
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  top: 50%;
+  left: 50%;
+  margin-top: -0.5rem;
+  margin-left: -0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: address-btn-spin 0.7s linear infinite;
+}
+@keyframes address-btn-spin {
+  to { transform: rotate(360deg); }
 }
 .address-hint {
   margin: 0.35rem 0 0 0;
@@ -256,6 +328,21 @@ body {
 .address-result-content .error-msg {
   color: var(--color-score-high);
   font-size: 0.9375rem;
+}
+.address-result-content .loading-msg {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+.address-result-content .loading-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+  vertical-align: -0.2em;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: address-btn-spin 0.7s linear infinite;
 }
 
 /* Map sits in a card-like container for clearer focus */
@@ -359,7 +446,9 @@ body {
   gap: 1rem;
   margin-bottom: 1.25rem;
   padding-bottom: 1rem;
+  padding-left: 1rem;
   border-bottom: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
 }
 
 .panel-title {
@@ -371,6 +460,7 @@ body {
 
 .close-btn {
   padding: 0.45rem 0.9rem;
+  min-height: 44px;
   background: var(--color-header);
   color: #fff;
   border: none;
@@ -379,11 +469,13 @@ body {
   font-family: var(--font-sans);
   font-size: 0.875rem;
   font-weight: 500;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .close-btn:hover {
   background: var(--color-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.25);
 }
 
 .close-btn:focus-visible {
@@ -422,10 +514,10 @@ body {
 /* Footer with legend */
 .footer {
   padding: 1.25rem 1.5rem;
-  background: var(--color-bg-panel);
+  background: var(--color-bg-footer);
   border-top: 1px solid var(--color-border);
   flex-shrink: 0;
-  box-shadow: 0 -2px 8px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 -2px 8px rgba(15, 23, 42, 0.06);
 }
 
 .footer-inner {
@@ -433,19 +525,57 @@ body {
   margin: 0 auto;
 }
 
+.footer-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.footer-legend-row .legend {
+  margin-bottom: 0;
+}
+
 .legend {
   display: flex;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 0.5rem;
 }
 
 .legend-hint {
-  width: 100%;
-  margin: 0.25rem 0 0 0;
+  margin: 0;
   font-size: 0.8125rem;
   color: var(--color-text-muted);
+}
+
+.footer-meta {
+  margin-bottom: 1rem;
+}
+
+.footer-meta .data-note {
+  margin-bottom: 0.5rem;
+}
+
+.footer-legal {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.footer-legal a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.footer-legal a:hover {
+  text-decoration: underline;
+}
+
+.footer-legal-sep {
+  margin: 0 0.35rem;
 }
 
 .legend-label {
@@ -555,5 +685,11 @@ body {
   }
   .legend-bar {
     flex-wrap: wrap;
+  }
+  .footer-legend-row {
+    margin-bottom: 0.75rem;
+  }
+  .footer-meta {
+    margin-bottom: 0.75rem;
   }
 }

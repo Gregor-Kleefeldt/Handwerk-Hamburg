@@ -3,11 +3,14 @@ Pipeline: run load → clean/transform → analyze → visualize and optionally 
 """
 
 import json
+import logging
 import re
 from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 from handwerk_hamburg.config import (
     DEFAULT_TRADE,
@@ -150,17 +153,21 @@ def run_pipeline(project_root: Path | None = None) -> dict:
     # Fetch electricians from Overpass (continue with empty list if API times out)
     try:
         overpass_businesses = fetch_businesses_overpass(DEFAULT_TRADE)
-    except Exception:
+        logger.info("Fetched %d electricians from Overpass", len(overpass_businesses))
+    except Exception as e:
+        logger.warning("Overpass API failed, continuing with empty list: %s", e)
         overpass_businesses = []
     overpass_count = len(overpass_businesses)
 
     # Add electricians from elektriker.org Hamburg list (PLZ-based placement); get list + geocode stats
     elektriker_org, elektriker_geocode_stats = businesses_from_elektriker_org()
     elektriker_count = len(elektriker_org)
+    logger.info("Loaded %d electricians from elektriker.org (geocoded: %d, PLZ fallback: %d)", elektriker_count, elektriker_geocode_stats["geocoded"], elektriker_geocode_stats["plz_fallback"])
     businesses = overpass_businesses + elektriker_org
     # Deduplicate: same shop can appear from both sources (normalized name + address/coords)
     businesses = deduplicate_businesses(businesses)
     total_after_dedupe = len(businesses)
+    logger.info("Total businesses after dedupe: %d", total_after_dedupe)
 
     # Build data freshness metadata for trust/debugging (generated_at, source counts, geocode hit/miss)
     generated_at = datetime.now(timezone.utc).isoformat()
@@ -181,6 +188,7 @@ def run_pipeline(project_root: Path | None = None) -> dict:
 
     # Analyze: load PLZ + population and score each area
     geojson = run_scoring(businesses)
+    logger.info("Scoring complete, building map GeoJSON")
     map_geojson = build_map_geojson(geojson)
     # Attach metadata to GeoJSON so the file is self-describing (frontend can show "Data as of ...")
     map_geojson["metadata"] = {
@@ -193,6 +201,7 @@ def run_pipeline(project_root: Path | None = None) -> dict:
     geojson_path = processed_dir / OUTPUT_GEOJSON_FILENAME
     with open(geojson_path, "w", encoding="utf-8") as f:
         json.dump(map_geojson, f, ensure_ascii=False, indent=2)
+    logger.info("Wrote GeoJSON to %s", geojson_path)
 
     # Write pipeline metadata to data/processed for debugging and trust
     metadata_path = processed_dir / OUTPUT_METADATA_FILENAME
@@ -203,9 +212,11 @@ def run_pipeline(project_root: Path | None = None) -> dict:
     df = businesses_to_dataframe(businesses)
     map_path = root / OUTPUT_MAP_PATH
     create_handwerk_map(df, output_path=map_path)
+    logger.info("Wrote interactive map to %s", map_path)
     # Generate electrician density heatmap after the main map
     heatmap_path = root / OUTPUT_HEATMAP_PATH
     create_electrician_heatmap(df, output_path=heatmap_path)
+    logger.info("Wrote heatmap to %s", heatmap_path)
 
     # Write electricians list for web app address-based district analysis (lat, lon, name, address); include metadata
     electricians_path = processed_dir / OUTPUT_ELECTRICIANS_FILENAME
@@ -216,6 +227,7 @@ def run_pipeline(project_root: Path | None = None) -> dict:
     electricians_export = {"metadata": metadata, "electricians": electricians_list}
     with open(electricians_path, "w", encoding="utf-8") as f:
         json.dump(electricians_export, f, ensure_ascii=False, indent=2)
+    logger.info("Wrote electricians list to %s", electricians_path)
 
     return {
         "geojson": map_geojson,

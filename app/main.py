@@ -13,6 +13,8 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from handwerk_hamburg.config import set_project_root, get_processed_dir
+
 # API guardrails: protect Nominatim usage and app stability
 MAX_SUGGESTION_QUERY_LENGTH = 200
 MAX_ADDRESS_ANALYSIS_LENGTH = 500
@@ -22,7 +24,8 @@ RATE_LIMIT_WINDOW_SECONDS = 60
 # Paths relative to this file (app runs from project root)
 APP_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = APP_DIR.parent
-PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
+set_project_root(PROJECT_ROOT)          # register root so config can resolve paths
+PROCESSED_DIR = get_processed_dir()     # single source of truth from config.py
 # Scored GeoJSON for electricians (MVP)
 GEOJSON_PATH = PROCESSED_DIR / "white_spot_electrician.geojson"
 # Hamburg outline (union of PLZ) for map border

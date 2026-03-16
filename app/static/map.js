@@ -81,6 +81,10 @@ function showInfoPanel(props) {
   });
   panel.classList.remove("hidden");
   if (hint) hint.classList.add("hidden");
+  var closeBtn = document.getElementById("close-panel");
+  if (closeBtn) {
+    requestAnimationFrame(function () { closeBtn.focus(); });
+  }
 }
 
 function hideInfoPanel() {
@@ -242,6 +246,33 @@ function addUserLocationMarker(lat, lon) {
   map.setView([lat, lon], Math.max(map.getZoom(), 14));
 }
 
+/** User-friendly message when address analysis fails (API or network). */
+var ADDRESS_ANALYSIS_ERROR_MSG = "Adresse konnte nicht ausgewertet werden. Bitte erneut versuchen.";
+
+/**
+ * Show the address-result panel with a loading state (spinner + "Wird geladen…").
+ */
+function showAddressResultLoading() {
+  var panel = document.getElementById("address-result-panel");
+  var content = document.getElementById("address-result-content");
+  if (!panel || !content) return;
+  content.innerHTML = "";
+  var p = document.createElement("p");
+  p.className = "loading-msg";
+  var span = document.createElement("span");
+  span.className = "loading-spinner";
+  span.setAttribute("aria-hidden", "true");
+  p.appendChild(span);
+  p.appendChild(document.createTextNode("Wird geladen…"));
+  content.appendChild(p);
+  content.className = "address-result-content";
+  panel.classList.remove("hidden");
+  var closeBtn = document.getElementById("close-address-panel");
+  if (closeBtn) {
+    requestAnimationFrame(function () { closeBtn.focus(); });
+  }
+}
+
 /**
  * Build HTML for the address analysis result and show the result panel.
  */
@@ -253,7 +284,7 @@ function showAddressResult(data) {
   if (data.error) {
     var p = document.createElement("p");
     p.className = "error-msg";
-    p.textContent = data.error;
+    p.textContent = data.error || ADDRESS_ANALYSIS_ERROR_MSG;
     content.appendChild(p);
   } else {
     var districtTitle = document.createElement("h3");
@@ -296,6 +327,10 @@ function showAddressResult(data) {
   }
   content.className = "address-result-content";
   panel.classList.remove("hidden");
+  var closeBtn = document.getElementById("close-address-panel");
+  if (closeBtn) {
+    requestAnimationFrame(function () { closeBtn.focus(); });
+  }
 }
 
 function hideAddressResultPanel() {
@@ -493,19 +528,36 @@ document.getElementById("address-search-btn").addEventListener("click", function
   var address = (input && input.value) ? input.value.trim() : "";
   hideAddressSuggestions();
   if (!address) return;
+  var btnLabel = btn.textContent;
   btn.disabled = true;
+  btn.classList.add("is-loading");
+  btn.setAttribute("aria-busy", "true");
+  btn.textContent = "Wird geladen…";
+  showAddressResultLoading();
   fetch("/api/address-analysis?address=" + encodeURIComponent(address))
     .then(function (res) {
+      if (!res.ok) {
+        return res.json().then(function (body) {
+          var msg = (body && body.detail) ? body.detail : ADDRESS_ANALYSIS_ERROR_MSG;
+          showAddressResult({ error: msg });
+        }).catch(function () {
+          showAddressResult({ error: ADDRESS_ANALYSIS_ERROR_MSG });
+        });
+        return;
+      }
       return res.json();
     })
     .then(function (data) {
-      showAddressResult(data);
+      if (data && !data.error) showAddressResult(data);
     })
     .catch(function (err) {
-      showAddressResult({ error: "Anfrage fehlgeschlagen. Bitte später erneut versuchen." });
+      showAddressResult({ error: ADDRESS_ANALYSIS_ERROR_MSG });
       console.error("Address analysis failed", err);
     })
     .finally(function () {
       btn.disabled = false;
+      btn.classList.remove("is-loading");
+      btn.removeAttribute("aria-busy");
+      btn.textContent = btnLabel;
     });
 });

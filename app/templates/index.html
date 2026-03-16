@@ -3,27 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="White-Spot Map Handwerk: Versorgung mit Elektro-Handwerk in Hamburg nach Postleitzahl – Unterversorgung sichtbar machen.">
   <title>White-Spot Map Handwerk – Hamburg</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Zum Inhalt</a>
   <header class="header">
     <div class="header-inner">
       <div class="brand">
-        <span class="brand-icon" aria-hidden="true">◈</span>
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+            <path d="M16 2C10.5 2 6 6.5 6 12c0 7 10 18 10 18s10-11 10-18c0-5.5-4.5-10-10-10z" fill="currentColor"/>
+            <path d="M12.5 11.5h2l1.5 4 1.5-4h2l-2.5 7h-2l-2.5-7zM20 11.5h2v5h-1v-3.2l-1.2 2.4h-.8l-1.2-2.4v3.2h-1v-5h2l1 2.2 1-2.2z" fill="#fff"/>
+          </svg>
+        </span>
         <div>
           <h1 class="title">White-Spot Map Handwerk</h1>
           <p class="subtitle">Hamburg – Versorgung mit Elektro-Handwerk nach Postleitzahl</p>
+          <p class="tagline">Versorgungslücken sichtbar machen</p>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="main">
+  <main id="main-content" class="main">
+    <div class="main-inner">
     <div class="address-search-wrap">
       <label for="address-input" class="address-label">Adresse in Hamburg</label>
       <div class="address-row">
@@ -59,27 +69,37 @@
         </div>
       </aside>
     </div>
+    </div>
   </main>
 
   <footer class="footer">
     <div class="footer-inner">
-      <div class="legend">
-        <span class="legend-label">White-Spot-Score</span>
-        <div class="legend-bar">
-          <span class="legend-caption legend-low">gut versorgt</span>
-          <div class="legend-gradient" role="img" aria-label="Verlauf von Grün bis Rot"></div>
-          <span class="legend-caption legend-high">unterversorgt</span>
+      <div class="footer-legend-row">
+        <div class="legend">
+          <span class="legend-label">White-Spot-Score</span>
+          <div class="legend-bar">
+            <span class="legend-caption legend-low">gut versorgt</span>
+            <div class="legend-gradient" role="img" aria-label="Verlauf von Grün bis Rot"></div>
+            <span class="legend-caption legend-high">unterversorgt</span>
+          </div>
         </div>
         <p class="legend-hint">Grün = gute Versorgung, Rot = Unterversorgung mit Elektro-Handwerk.</p>
       </div>
-      <p class="data-note">Daten: Statistik Nord (Einwohner), OSM & elektriker.org (Betriebe). Stadtteilgrenzen: ALKIS Verwaltungsgrenzen (LGV Hamburg). Stand PLZ 31.12.2024.</p>
-      <details class="method-details" id="method-details">
-        <summary class="method-summary">Wie wird der White-Spot-Score berechnet?</summary>
-        <div class="method-content">
-          <p><strong>Berechnung:</strong> Pro PLZ: Einwohner ÷ Anzahl Betriebe (mind. 1). Der Score ist die Min-Max-Normierung dieses Werts: PLZ mit den wenigsten Betrieben pro Einwohner = 1 (unterversorgt), beste Versorgung = 0.</p>
-          <p><strong>Einschränkungen:</strong> (1) <em>PLZ-Granularität</em> – die Karte zeigt nur Postleitzahlgebiete, nicht einzelne Straßen oder Kieze. (2) <em>Datenvollständigkeit</em> – Betriebe stammen aus OSM und elektriker.org; nicht alle Betriebe sind erfasst, Unterversorgung kann überschätzt werden. Die Karte eignet sich für den Vergleich zwischen PLZ, nicht als absolute Versorgungsangabe.</p>
-        </div>
-      </details>
+      <div class="footer-meta">
+        <p class="data-note">Daten: Statistik Nord (Einwohner), OSM & elektriker.org (Betriebe). Stadtteilgrenzen: ALKIS Verwaltungsgrenzen (LGV Hamburg). Stand PLZ 31.12.2024.</p>
+        <details class="method-details" id="method-details">
+          <summary class="method-summary">Wie wird der White-Spot-Score berechnet?</summary>
+          <div class="method-content">
+            <p><strong>Berechnung:</strong> Pro PLZ: Einwohner ÷ Anzahl Betriebe (mind. 1). Der Score ist die Min-Max-Normierung dieses Werts: PLZ mit den wenigsten Betrieben pro Einwohner = 1 (unterversorgt), beste Versorgung = 0.</p>
+            <p><strong>Einschränkungen:</strong> (1) <em>PLZ-Granularität</em> – die Karte zeigt nur Postleitzahlgebiete, nicht einzelne Straßen oder Kieze. (2) <em>Datenvollständigkeit</em> – Betriebe stammen aus OSM und elektriker.org; nicht alle Betriebe sind erfasst, Unterversorgung kann überschätzt werden. Die Karte eignet sich für den Vergleich zwischen PLZ, nicht als absolute Versorgungsangabe.</p>
+          </div>
+        </details>
+      </div>
+      <div class="footer-legal">
+        <a href="#">Impressum</a>
+        <span class="footer-legal-sep" aria-hidden="true">·</span>
+        <a href="#">Datenschutz</a>
+      </div>
     </div>
   </footer>
 

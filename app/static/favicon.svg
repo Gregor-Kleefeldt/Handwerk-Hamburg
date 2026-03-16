@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Pin shape with W: teal on dark-friendly background -->
+  <path d="M16 2C10.5 2 6 6.5 6 12c0 7 10 18 10 18s10-11 10-18c0-5.5-4.5-10-10-10z" fill="#0d9488"/>
+  <path d="M12.5 11.5h2l1.5 4 1.5-4h2l-2.5 7h-2l-2.5-7zM20 11.5h2v5h-1v-3.2l-1.2 2.4h-.8l-1.2-2.4v3.2h-1v-5h2l1 2.2 1-2.2z" fill="#fff"/>
+</svg>

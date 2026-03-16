@@ -49,3 +49,27 @@ def get_processed_dir() -> Path:
     if _project_root is None:
         raise RuntimeError("Project root not set. Call set_project_root() first (e.g. in scripts/run_analysis.py).")
     return _project_root / "data" / "processed"
+
+
+# ── Geocoding helpers ────────────────────────────────────────────────────────
+
+# Street-name variants to normalize before sending to Nominatim.
+# Each entry is (wrong_variant, canonical_form).
+# Extend this list when users report addresses that Nominatim fails to resolve.
+STREET_NORMALIZATIONS: list[tuple[str, str]] = [
+    ("Max Brauer Alle", "Max-Brauer-Allee"),
+    ("Max Brauer Allee", "Max-Brauer-Allee"),
+]
+
+# Known fallback coordinates for addresses that Nominatim frequently mis-resolves
+# or fails on (e.g. when the service is down).
+# Keys: normalized address string (lowercase, no commas, single spaces).
+# Values: (lat, lon) tuples.
+# Extend this dict to add more reliable fallback addresses.
+_KNOWN_MAX_BRAUER_ALLEE_10: tuple[float, float] = (53.5506, 9.9292)
+KNOWN_ADDRESS_COORDS: dict[str, tuple[float, float]] = {
+    "max-brauer-allee 10 hamburg":       _KNOWN_MAX_BRAUER_ALLEE_10,
+    "max-brauer-allee 10 22765 hamburg": _KNOWN_MAX_BRAUER_ALLEE_10,
+    "max brauer allee 10 hamburg":       _KNOWN_MAX_BRAUER_ALLEE_10,
+    "max brauer alle 10 hamburg":        _KNOWN_MAX_BRAUER_ALLEE_10,
+}

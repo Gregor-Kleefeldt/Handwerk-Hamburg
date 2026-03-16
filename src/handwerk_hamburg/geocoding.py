@@ -13,27 +13,15 @@ from pathlib import Path
 
 import requests
 
-from handwerk_hamburg.config import HAMBURG_BBOX
+from handwerk_hamburg.config import (
+    HAMBURG_BBOX,
+    STREET_NORMALIZATIONS,
+    KNOWN_ADDRESS_COORDS,
+)
 from handwerk_hamburg.data_loader import plz_centroids, load_elektriker_org_list
 
 # Filename for persistent geocode cache (avoids re-querying Nominatim every run)
 GEOCODE_CACHE_FILENAME = "geocode_cache.json"
-
-# Common street-name variants in Hamburg (user input -> canonical form for geocoding)
-STREET_NORMALIZATIONS = [
-    ("Max Brauer Alle", "Max-Brauer-Allee"),
-    ("Max Brauer Allee", "Max-Brauer-Allee"),
-]
-
-# Known coordinates for frequent addresses when Nominatim fails (e.g. down/SSL)
-# Keys: normalized for lookup (_normalize_address_key: lowercase, single spaces, no commas)
-_KNOWN_MAX_BRAUER_ALLEE_10 = (53.5506, 9.9292)
-KNOWN_ADDRESS_COORDS: dict[str, tuple[float, float]] = {
-    "max-brauer-allee 10 hamburg": _KNOWN_MAX_BRAUER_ALLEE_10,
-    "max-brauer-allee 10 22765 hamburg": _KNOWN_MAX_BRAUER_ALLEE_10,
-    "max brauer allee 10 hamburg": _KNOWN_MAX_BRAUER_ALLEE_10,
-    "max brauer alle 10 hamburg": _KNOWN_MAX_BRAUER_ALLEE_10,
-}
 
 # Nominatim (OSM) geocoding: required by usage policy
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
