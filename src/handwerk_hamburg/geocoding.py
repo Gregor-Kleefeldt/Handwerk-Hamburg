@@ -1,9 +1,13 @@
 """
 Geocoding: resolve PLZ to coordinates (e.g. PLZ centroid), geocode full addresses,
 and build business points from lists.
+
+Single source of truth for Nominatim (requests), address normalization,
+known-address fallbacks, and cache. No geopy or duplicate paths.
 """
 
 import json
+import re
 import time
 from pathlib import Path
 
@@ -14,6 +18,22 @@ from handwerk_hamburg.data_loader import plz_centroids, load_elektriker_org_list
 
 # Filename for persistent geocode cache (avoids re-querying Nominatim every run)
 GEOCODE_CACHE_FILENAME = "geocode_cache.json"
+
+# Common street-name variants in Hamburg (user input -> canonical form for geocoding)
+STREET_NORMALIZATIONS = [
+    ("Max Brauer Alle", "Max-Brauer-Allee"),
+    ("Max Brauer Allee", "Max-Brauer-Allee"),
+]
+
+# Known coordinates for frequent addresses when Nominatim fails (e.g. down/SSL)
+# Keys: normalized for lookup (_normalize_address_key: lowercase, single spaces, no commas)
+_KNOWN_MAX_BRAUER_ALLEE_10 = (53.5506, 9.9292)
+KNOWN_ADDRESS_COORDS: dict[str, tuple[float, float]] = {
+    "max-brauer-allee 10 hamburg": _KNOWN_MAX_BRAUER_ALLEE_10,
+    "max-brauer-allee 10 22765 hamburg": _KNOWN_MAX_BRAUER_ALLEE_10,
+    "max brauer allee 10 hamburg": _KNOWN_MAX_BRAUER_ALLEE_10,
+    "max brauer alle 10 hamburg": _KNOWN_MAX_BRAUER_ALLEE_10,
+}
 
 # Nominatim (OSM) geocoding: required by usage policy
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
@@ -64,6 +84,67 @@ def _save_geocode_cache() -> None:
             json.dump(data, f, ensure_ascii=False, indent=0)
     except Exception:
         pass
+
+
+def normalize_address_for_geocoding(address: str) -> list[str]:
+    """
+    Build a list of address variants to try for geocoding (e.g. fix typos, add Hamburg/Germany).
+
+    Args:
+        address: Raw user input.
+
+    Returns:
+        List of address strings to try in order (most specific first).
+    """
+    s = (address or "").strip()
+    if not s:
+        return []
+    # Apply known street name normalizations (e.g. "Max Brauer Alle" -> "Max-Brauer-Allee")
+    normalized = s
+    for wrong, right in STREET_NORMALIZATIONS:
+        if wrong in normalized:
+            normalized = normalized.replace(wrong, right)
+    # Ensure Hamburg is in the string for better Nominatim results
+    if "hamburg" not in normalized.lower():
+        normalized = f"{normalized}, Hamburg"
+    # Nominatim often expects "Street Number, City" – ensure comma before Hamburg
+    normalized = re.sub(r"(\d)\s+(Hamburg)", r"\1, \2", normalized, flags=re.IGNORECASE)
+    variants = [normalized]
+    if normalized != s:
+        variants.append(s)
+    # Try with comma before Hamburg on original too
+    s_comma = re.sub(r"(\d)\s+(Hamburg)", r"\1, \2", s, flags=re.IGNORECASE)
+    if s_comma != normalized and s_comma not in variants:
+        variants.append(s_comma)
+    # PLZ 22765 = Ottensen (Max-Brauer-Allee); helps Nominatim
+    if "max-brauer" in normalized.lower() or "max brauer" in s.lower():
+        variants.append("Max-Brauer-Allee 10, 22765 Hamburg")
+    # Try with Germany for disambiguation
+    if "germany" not in normalized.lower() and "deutschland" not in normalized.lower():
+        variants.append(f"{normalized}, Germany")
+    return variants
+
+
+def _normalize_address_key(address: str) -> str:
+    """Single canonical form for address lookup: lowercase, single spaces, no commas."""
+    s = (address or "").strip().lower().replace(",", " ")
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def _lookup_known_address(address: str) -> tuple[float, float] | None:
+    """
+    Return known (lat, lon) for an address if it matches a built-in fallback (e.g. Max-Brauer-Allee 10).
+    Uses normalized key: lowercase, single spaces, no punctuation.
+    """
+    lookup_key = _normalize_address_key(address)
+    coords = KNOWN_ADDRESS_COORDS.get(lookup_key)
+    if coords is not None:
+        return coords
+    for key, known_coords in KNOWN_ADDRESS_COORDS.items():
+        key_clean = _normalize_address_key(key)
+        if lookup_key == key_clean or key_clean in lookup_key or lookup_key in key_clean:
+            return known_coords
+    return None
 
 
 def geocode_address(address: str) -> tuple[float, float] | None:
@@ -118,6 +199,35 @@ def geocode_address(address: str) -> tuple[float, float] | None:
     # Rate-limit: wait before next Nominatim request (1 req/s policy)
     time.sleep(NOMINATIM_DELAY_SECONDS)
     return (lat, lon)
+
+
+def geocode_address_with_fallbacks(address: str) -> tuple[float, float] | None:
+    """
+    Geocode a raw user address with normalization and fallbacks.
+
+    Tries in order: (1) known-address table, (2) Nominatim for each normalized variant.
+    Use this for user-facing address lookup (e.g. district analysis). For batch/ETL
+    use geocode_address() directly.
+
+    Args:
+        address: Raw address string (e.g. "Max Brauer Alle 10 Hamburg").
+
+    Returns:
+        (lat, lon) if found, else None.
+    """
+    address = (address or "").strip()
+    if not address:
+        return None
+    # 1) Known coordinates (works when Nominatim is down)
+    coords = _lookup_known_address(address)
+    if coords is not None:
+        return coords
+    # 2) Try each normalized variant with the single Nominatim path (cache + Hamburg bbox)
+    for variant in normalize_address_for_geocoding(address):
+        coords = geocode_address(variant)
+        if coords is not None:
+            return coords
+    return None
 
 
 # Timestamp of last Nominatim request (for rate limiting in search)

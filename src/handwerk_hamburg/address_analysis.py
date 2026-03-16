@@ -1,110 +1,17 @@
 """
 Address-based district analysis: geocode an address, find the Hamburg district (Stadtteil),
 and return electrician statistics for that district.
+
+Geocoding is delegated to handwerk_hamburg.geocoding (single source of truth).
 """
 
 import json
-import re
 from pathlib import Path
 from typing import Any
 
 from shapely.geometry import shape, Point
 
-# Optional geopy import so pipeline can run without it if only batch export is used
-try:
-    from geopy.geocoders import Nominatim
-    from geopy.exc import GeocoderTimedOut, GeocoderServiceError
-    GEOPY_AVAILABLE = True
-except ImportError:
-    GEOPY_AVAILABLE = False
-
-
-# User-Agent required by Nominatim usage policy
-GEOCODE_USER_AGENT = "handwerk-hamburg"
-
-# Common street-name variants in Hamburg (user input -> canonical form for geocoding)
-STREET_NORMALIZATIONS = [
-    ("Max Brauer Alle", "Max-Brauer-Allee"),
-    ("Max Brauer Allee", "Max-Brauer-Allee"),
-]
-
-# Known coordinates for frequent addresses when geocoding fails (e.g. Nominatim down/SSL)
-# Key: normalized for lookup (lowercase, single spaces, no punctuation); value: (lat, lon)
-_MAX_BRAUER_ALLEE_10 = (53.5506, 9.9292)
-KNOWN_ADDRESS_COORDS: dict[str, tuple[float, float]] = {
-    "max-brauer-allee 10 hamburg": _MAX_BRAUER_ALLEE_10,
-    "max-brauer-allee 10, hamburg": _MAX_BRAUER_ALLEE_10,
-    "max-brauer-allee 10, 22765 hamburg": _MAX_BRAUER_ALLEE_10,
-    "max brauer allee 10 hamburg": _MAX_BRAUER_ALLEE_10,
-    "max brauer alle 10 hamburg": _MAX_BRAUER_ALLEE_10,
-}
-
-
-def normalize_address_for_geocoding(address: str) -> list[str]:
-    """
-    Build a list of address variants to try for geocoding (e.g. fix typos, add Hamburg/Germany).
-
-    Args:
-        address: Raw user input.
-
-    Returns:
-        List of address strings to try in order (most specific first).
-    """
-    s = (address or "").strip()
-    if not s:
-        return []
-    # Apply known street name normalizations (e.g. "Max Brauer Alle" -> "Max-Brauer-Allee")
-    normalized = s
-    for wrong, right in STREET_NORMALIZATIONS:
-        if wrong in normalized:
-            normalized = normalized.replace(wrong, right)
-    # Ensure Hamburg is in the string for better Nominatim results
-    if "hamburg" not in normalized.lower():
-        normalized = f"{normalized}, Hamburg"
-    # Nominatim often expects "Street Number, City" – ensure comma before Hamburg
-    normalized = re.sub(r"(\d)\s+(Hamburg)", r"\1, \2", normalized, flags=re.IGNORECASE)
-    variants = [normalized]
-    if normalized != s:
-        variants.append(s)
-    # Try with comma before Hamburg on original too
-    s_comma = re.sub(r"(\d)\s+(Hamburg)", r"\1, \2", s, flags=re.IGNORECASE)
-    if s_comma != normalized and s_comma not in variants:
-        variants.append(s_comma)
-    # PLZ 22765 = Ottensen (Max-Brauer-Allee); helps Nominatim
-    if "max-brauer" in normalized.lower() or "max brauer" in s.lower():
-        variants.append("Max-Brauer-Allee 10, 22765 Hamburg")
-    # Try with Germany for disambiguation
-    if "germany" not in normalized.lower() and "deutschland" not in normalized.lower():
-        variants.append(f"{normalized}, Germany")
-    return variants
-
-
-def geocode_address(address: str) -> tuple[float, float] | None:
-    """
-    Convert an address string to (latitude, longitude) using Nominatim (OpenStreetMap).
-
-    Args:
-        address: Full address string, e.g. "Max-Brauer-Allee 10, Hamburg".
-
-    Returns:
-        (lat, lon) if the address was found, else None.
-    """
-    if not GEOPY_AVAILABLE:
-        return None
-    address = (address or "").strip()
-    if not address:
-        return None
-    try:
-        # Create Nominatim geolocator with a unique user agent (required by usage policy)
-        geolocator = Nominatim(user_agent=GEOCODE_USER_AGENT)
-        # Query Nominatim for the given address; returns first result or None
-        location = geolocator.geocode(address)
-        if location is None:
-            return None
-        # Return (latitude, longitude) as floats
-        return (location.latitude, location.longitude)
-    except (GeocoderTimedOut, GeocoderServiceError, AttributeError):
-        return None
+from handwerk_hamburg.geocoding import geocode_address_with_fallbacks
 
 
 def get_district_from_coordinates(lat: float, lon: float, geojson: dict) -> str | None:
@@ -240,33 +147,8 @@ def run_district_analysis(
     with open(geojson_path, encoding="utf-8") as f:
         geojson = json.load(f)
 
-    # Optional: use known coordinates for this address (works even when Nominatim is down)
-    lookup_key = re.sub(r"\s+", " ", address.strip().lower()).replace(",", " ")
-    lookup_key = re.sub(r"\s+", " ", lookup_key).strip()
-    coords = KNOWN_ADDRESS_COORDS.get(lookup_key)
-    if coords is None:
-        for key, known_coords in KNOWN_ADDRESS_COORDS.items():
-            key_clean = key.replace(",", " ")
-            if lookup_key == key_clean or key_clean in lookup_key or lookup_key in key_clean:
-                coords = known_coords
-                break
-        else:
-            coords = None
-    if coords is None:
-        # Geocode: try requests-based geocoder first (Hamburg bbox), then geopy
-        try:
-            from handwerk_hamburg.geocoding import geocode_address as geocode_address_requests
-            for variant in normalize_address_for_geocoding(address):
-                coords = geocode_address_requests(variant)
-                if coords is not None:
-                    break
-        except Exception:
-            pass
-        if coords is None:
-            for variant in normalize_address_for_geocoding(address):
-                coords = geocode_address(variant)
-                if coords is not None:
-                    break
+    # Single geocoding path: known-address fallback + normalized variants via Nominatim (geocoding.py)
+    coords = geocode_address_with_fallbacks(address)
     if coords is None:
         return {
             "district": None,

@@ -2,6 +2,7 @@
 FastAPI app: serves the White-Spot Map dashboard and the scored GeoJSON.
 """
 
+import asyncio
 import sys
 from pathlib import Path
 
@@ -90,8 +91,9 @@ async def address_suggestions(q: str = ""):
     """
     from handwerk_hamburg.geocoding import nominatim_search
 
+    # Run blocking Nominatim HTTP + sleep in thread pool so the event loop is not blocked
+    raw = await asyncio.to_thread(nominatim_search, q.strip(), 8)
     # Return list of { "label": "Street, City", "display_name": "..." } – label for dropdown, display_name for analysis
-    raw = nominatim_search(query=q.strip(), limit=8)
     return [{"label": r.get("label", r["display_name"]), "display_name": r["display_name"]} for r in raw]
 
 
@@ -103,7 +105,9 @@ async def address_analysis(address: str = ""):
     """
     from handwerk_hamburg.address_analysis import run_district_analysis
 
-    result = run_district_analysis(
+    # Run blocking geocode + file I/O in thread pool so the event loop is not blocked
+    result = await asyncio.to_thread(
+        run_district_analysis,
         address=address.strip(),
         geojson_path=GEOJSON_PATH,
         businesses_path=ELECTRICIANS_PATH,
