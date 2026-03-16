@@ -22,6 +22,23 @@ This project analyzes and visualizes handcraft businesses in Hamburg using a **m
 
 ---
 
+## How the White-Spot Score is Computed
+
+The **white_spot_score** (0–1) indicates how under-served a postal code area (PLZ) is for a given trade (e.g. electricians). Higher values mean relatively fewer businesses per inhabitant.
+
+**Formula:**
+
+1. For each PLZ: **people_per_business** = inhabitants ÷ max(business_count, 1).
+2. **white_spot_score** = min–max normalization of people_per_business over all PLZ:  
+   score = (people_per_business − min) / (max − min), so the PLZ with the fewest businesses per capita gets 1, the best-served gets 0.
+
+**Limitations:**
+
+- **PLZ granularity:** The score is per postal code area. Within one PLZ we do not know which streets or neighbourhoods are under-served; the map cannot show sub-PLZ variation.
+- **Source completeness:** Business counts come from **OpenStreetMap (Overpass)** and **elektriker.org**. Not all businesses are listed in these sources, so we may undercount and overstate “white spots”. The map is best used as a relative comparison between PLZ, not as an absolute measure of coverage.
+
+---
+
 ## Data Pipeline
 
 The pipeline runs in five stages:
@@ -64,17 +81,19 @@ Visualize
    source venv/bin/activate
    ```
 
-3. Install dependencies:
+3. Install the package in editable mode (recommended; installs dependencies and enables clean imports):
 
    ```bash
-   pip install -r requirements.txt
+   pip install -e .
    ```
+
+   Alternatively, install dependencies only: `pip install -r requirements.txt` and ensure the project root is on `PYTHONPATH` when running scripts or the app.
 
 ---
 
 ## Usage
 
-Run the full pipeline from the project root:
+Run the full pipeline from the project root (after `pip install -e .`):
 
 ```bash
 python scripts/run_analysis.py

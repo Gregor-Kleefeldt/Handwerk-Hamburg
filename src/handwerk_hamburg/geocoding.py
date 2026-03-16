@@ -389,7 +389,7 @@ def resolve_plz_to_coords(
 def businesses_from_elektriker_org(
     list_path: Path | None = None,
     geojson_path: Path | None = None,
-) -> list[dict]:
+) -> tuple[list[dict], dict]:
     """
     Load electricians from elektriker.org JSON and convert to business points.
 
@@ -402,13 +402,16 @@ def businesses_from_elektriker_org(
         geojson_path: Path to PLZ GeoJSON for centroids. If None, uses default raw path.
 
     Returns:
-        List of dicts with lon, lat, optional name, address, and source="elektriker_org".
+        Tuple of (list of business dicts, stats dict with "geocoded" and "plz_fallback" counts).
     """
     entries = load_elektriker_org_list(list_path)
     centroids = plz_centroids(geojson_path)
     # Load persisted geocode cache so we don't re-query addresses every run
     _load_geocode_cache()
     features = []
+    # Count how many were placed via geocoding vs PLZ centroid fallback (for metadata/debugging)
+    geocoded_count = 0
+    plz_fallback_count = 0
     for entry in entries:
         plz = (entry.get("plz") or "").strip()
         if not plz:
@@ -422,6 +425,11 @@ def businesses_from_elektriker_org(
             coords = geocode_address(address)
             if coords is not None:
                 lat, lon = coords
+                geocoded_count += 1
+            else:
+                plz_fallback_count += 1
+        else:
+            plz_fallback_count += 1
         if lat is None or lon is None:
             lon, lat = centroids[plz]
         features.append({
@@ -433,4 +441,5 @@ def businesses_from_elektriker_org(
         })
     # Persist cache for next run (speeds up future pipeline runs)
     _save_geocode_cache()
-    return features
+    stats = {"geocoded": geocoded_count, "plz_fallback": plz_fallback_count}
+    return features, stats

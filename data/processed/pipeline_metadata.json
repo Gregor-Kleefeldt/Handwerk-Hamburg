@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-03-16T18:40:16.289944+00:00",
+  "source_counts": {
+    "overpass": 32,
+    "elektriker_org": 245,
+    "total_after_dedupe": 277
+  },
+  "geocode": {
+    "elektriker_org": {
+      "hit": 245,
+      "miss": 0
+    }
+  }
+}

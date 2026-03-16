@@ -73,6 +73,13 @@
         <p class="legend-hint">Grün = gute Versorgung, Rot = Unterversorgung mit Elektro-Handwerk.</p>
       </div>
       <p class="data-note">Daten: Statistik Nord (Einwohner), OSM & elektriker.org (Betriebe). Stadtteilgrenzen: ALKIS Verwaltungsgrenzen (LGV Hamburg). Stand PLZ 31.12.2024.</p>
+      <details class="method-details" id="method-details">
+        <summary class="method-summary">Wie wird der White-Spot-Score berechnet?</summary>
+        <div class="method-content">
+          <p><strong>Berechnung:</strong> Pro PLZ: Einwohner ÷ Anzahl Betriebe (mind. 1). Der Score ist die Min-Max-Normierung dieses Werts: PLZ mit den wenigsten Betrieben pro Einwohner = 1 (unterversorgt), beste Versorgung = 0.</p>
+          <p><strong>Einschränkungen:</strong> (1) <em>PLZ-Granularität</em> – die Karte zeigt nur Postleitzahlgebiete, nicht einzelne Straßen oder Kieze. (2) <em>Datenvollständigkeit</em> – Betriebe stammen aus OSM und elektriker.org; nicht alle Betriebe sind erfasst, Unterversorgung kann überschätzt werden. Die Karte eignet sich für den Vergleich zwischen PLZ, nicht als absolute Versorgungsangabe.</p>
+        </div>
+      </details>
     </div>
   </footer>
 

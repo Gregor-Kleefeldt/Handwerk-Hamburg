@@ -486,6 +486,41 @@ body {
   color: var(--color-text-muted);
 }
 
+/* Method / model assumptions (collapsible) */
+.method-details {
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+.method-summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-accent);
+  list-style: none;
+}
+.method-summary::-webkit-details-marker {
+  display: none;
+}
+.method-summary::before {
+  content: "▸ ";
+  display: inline-block;
+  transition: transform var(--transition-panel);
+}
+.method-details[open] .method-summary::before {
+  transform: rotate(90deg);
+}
+.method-content {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--color-border);
+}
+.method-content p {
+  margin: 0.35rem 0 0 0;
+}
+.method-content p:first-child {
+  margin-top: 0;
+}
+
 /* Responsive: narrow screens */
 @media (max-width: 768px) {
   .header {

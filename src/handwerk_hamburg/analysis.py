@@ -4,6 +4,7 @@ Analysis: assign businesses to PLZ, compute people-per-business and white-spot s
 
 from pathlib import Path
 
+from shapely import STRtree
 from shapely.geometry import shape, Point
 
 from handwerk_hamburg.data_loader import plz_features_with_population
@@ -16,6 +17,10 @@ def assign_businesses_to_plz(
     """
     For each PLZ polygon, count how many business points fall inside.
 
+    Uses a spatial index (STRtree) so that each point is matched against
+    candidate polygons by bbox, then exact containment is tested only for
+    candidates, instead of iterating over all polygons for every point.
+
     Args:
         plz_features: List of GeoJSON-style feature dicts with geometry and properties.
         business_points: List of dicts with 'lon', 'lat' (and optional extra keys).
@@ -23,7 +28,9 @@ def assign_businesses_to_plz(
     Returns:
         Same plz_features with added property business_count on each feature.
     """
-    for feat in plz_features:
+    # Build list of (feature_index, polygon) for features with valid geometry
+    valid = []
+    for i, feat in enumerate(plz_features):
         geom = feat.get("geometry")
         if not geom:
             feat["properties"]["business_count"] = 0
@@ -33,12 +40,27 @@ def assign_businesses_to_plz(
         except Exception:
             feat["properties"]["business_count"] = 0
             continue
-        count = 0
-        for b in business_points:
-            pt = Point(b["lon"], b["lat"])
-            if poly.contains(pt):
-                count += 1
-        feat["properties"]["business_count"] = count
+        valid.append((i, poly))
+    if not valid:
+        return plz_features
+    # Extract polygons in same order as valid (index into valid = tree index)
+    polygons = [p for _, p in valid]
+    # Build spatial index over PLZ polygons for fast point-in-polygon lookup
+    tree = STRtree(polygons)
+    # Per-feature business counts (only for features in valid; others already set to 0)
+    counts = [0] * len(plz_features)
+    # For each business point, query tree with predicate "within" (point within polygon)
+    for b in business_points:
+        pt = Point(b["lon"], b["lat"])
+        # Returns tree indices of polygons that contain this point
+        candidate_indices = tree.query(pt, predicate="within")
+        if candidate_indices.size > 0:
+            # Map tree index back to feature index; count in first containing polygon
+            feat_idx = valid[int(candidate_indices[0])][0]
+            counts[feat_idx] += 1
+    # Write counts back to features that had valid geometry
+    for tree_idx, (feat_idx, _) in enumerate(valid):
+        plz_features[feat_idx]["properties"]["business_count"] = counts[feat_idx]
     return plz_features
 
 

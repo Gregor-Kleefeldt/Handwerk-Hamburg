@@ -1,0 +1,31 @@
+# White-Spot Map Handwerk — package config and editable install
+# Install in development: pip install -e .
+# Then run: python scripts/run_analysis.py  or  uvicorn app.main:app --reload
+
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "white-spot-map-handwerk"
+version = "0.1.0"
+description = "Hamburg Handwerk White-Spot Map: load, score, and visualize electrician coverage by PLZ."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "jinja2>=3.1.0",
+    "requests>=2.31.0",
+    "shapely>=2.0.0",
+    "geojson>=3.1.0",
+    "folium>=0.15.0",
+    "pandas>=2.0.0",
+    "pytest>=7.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

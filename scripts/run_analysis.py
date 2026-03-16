@@ -6,18 +6,17 @@ scores areas, writes the result GeoJSON to data/processed/, and generates
 the interactive handcraft map (outputs/handwerk_map.html) and the electrician
 density heatmap (outputs/electrician_heatmap.html).
 
-Usage (from project root):
+Usage (from project root, after editable install):
+    pip install -e .
     python scripts/run_analysis.py
 """
 
-import sys
 from pathlib import Path
 
-# Add project root and src to path so handwerk_hamburg can be imported
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(PROJECT_ROOT / "src"))
-
 from handwerk_hamburg.pipeline import run_pipeline
+
+# Project root (parent of scripts/)
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:

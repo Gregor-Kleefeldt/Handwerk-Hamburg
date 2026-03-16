@@ -1,11 +1,8 @@
 """
-Pytest configuration: add project src to path so handwerk_hamburg can be imported.
+Pytest configuration. handwerk_hamburg is imported from the installed package (pip install -e .).
 """
 
-import sys
 from pathlib import Path
 
-# Project root (parent of tests/)
+# Project root (parent of tests/) for fixtures that need paths
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-# Add src so "import handwerk_hamburg" works
-sys.path.insert(0, str(PROJECT_ROOT / "src"))

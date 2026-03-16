@@ -9,18 +9,48 @@ import json
 from pathlib import Path
 from typing import Any
 
+from shapely import STRtree
 from shapely.geometry import shape, Point
 
 from handwerk_hamburg.geocoding import geocode_address_with_fallbacks
+
+
+def _build_district_tree(geojson: dict) -> tuple[STRtree | None, list[tuple[str | None, int]]]:
+    """
+    Build an STRtree from GeoJSON features and a list of (stadtteil, feature_index) for lookup.
+
+    Returns:
+        (tree, district_list) where district_list[i] is (stadtteil, original_feature_index)
+        for the i-th polygon in the tree. tree is None if no valid features.
+    """
+    features = geojson.get("features") or []
+    polygons = []
+    district_list = []
+    for i, feat in enumerate(features):
+        geom = feat.get("geometry")
+        if not geom:
+            continue
+        try:
+            poly = shape(geom)
+        except Exception:
+            continue
+        props = feat.get("properties") or {}
+        stadtteil = props.get("stadtteil") or props.get("district")
+        if stadtteil:
+            stadtteil = str(stadtteil).strip()
+        polygons.append(poly)
+        district_list.append((stadtteil, i))
+    if not polygons:
+        return None, []
+    return STRtree(polygons), district_list
 
 
 def get_district_from_coordinates(lat: float, lon: float, geojson: dict) -> str | None:
     """
     Determine the Hamburg district (Stadtteil) for a given point using the PLZ GeoJSON.
 
-    If the point falls inside a PLZ polygon, that feature's "stadtteil" property is returned.
-    If the point is outside all polygons (e.g. outside Hamburg), the nearest polygon's
-    stadtteil is returned.
+    Uses a spatial index (STRtree): first finds polygons containing the point via
+    predicate "within"; if none, uses query_nearest for the nearest polygon.
 
     Args:
         lat: Latitude of the point.
@@ -31,46 +61,21 @@ def get_district_from_coordinates(lat: float, lon: float, geojson: dict) -> str 
     Returns:
         The district name (stadtteil) string, or None if the GeoJSON has no features.
     """
-    features = geojson.get("features") or []
-    if not features:
+    tree, district_list = _build_district_tree(geojson)
+    if tree is None or not district_list:
         return None
     point = Point(lon, lat)
-    # First try: find a polygon that contains the point
-    for feat in features:
-        geom = feat.get("geometry")
-        if not geom:
-            continue
-        try:
-            poly = shape(geom)
-            if poly.contains(point):
-                # Return the district (stadtteil) from this feature's properties
-                props = feat.get("properties") or {}
-                stadtteil = props.get("stadtteil") or props.get("district")
-                if stadtteil:
-                    return str(stadtteil).strip()
-                return None
-        except Exception:
-            continue
-    # Fallback: find the nearest polygon by distance to its boundary/centroid
-    min_dist = float("inf")
-    nearest_stadtteil = None
-    for feat in features:
-        geom = feat.get("geometry")
-        if not geom:
-            continue
-        try:
-            poly = shape(geom)
-            # Distance from point to polygon (boundary or interior)
-            d = point.distance(poly)
-            if d < min_dist:
-                min_dist = d
-                props = feat.get("properties") or {}
-                stadtteil = props.get("stadtteil") or props.get("district")
-                if stadtteil:
-                    nearest_stadtteil = str(stadtteil).strip()
-        except Exception:
-            continue
-    return nearest_stadtteil
+    # Find polygons that contain the point (point within polygon)
+    candidate_indices = tree.query(point, predicate="within")
+    if candidate_indices.size > 0:
+        stadtteil = district_list[int(candidate_indices[0])][0]
+        return stadtteil or None
+    # Fallback: nearest polygon (e.g. point outside Hamburg)
+    nearest_idx = tree.query_nearest(point, all_matches=False)
+    if nearest_idx is not None:
+        stadtteil = district_list[int(nearest_idx)][0]
+        return stadtteil or None
+    return None
 
 
 def get_businesses_with_district(
@@ -80,6 +85,10 @@ def get_businesses_with_district(
     """
     Assign a district (Stadtteil) to each business by point-in-polygon using the GeoJSON.
 
+    Uses a spatial index (STRtree): one tree is built over all polygons, then each
+    business point is queried with predicate "within" so only candidate polygons
+    are considered instead of looping over all features.
+
     Args:
         businesses: List of dicts with "lat" and "lon" (and optionally "name", "address").
         geojson: GeoJSON FeatureCollection with PLZ polygons and properties.stadtteil.
@@ -88,8 +97,10 @@ def get_businesses_with_district(
         List of the same business dicts with an added "district" key (stadtteil name).
         Businesses outside all polygons get district None and are still included.
     """
-    features = geojson.get("features") or []
+    tree, district_list = _build_district_tree(geojson)
     result = []
+    if tree is None or not district_list:
+        return [{**b, "district": None} for b in businesses]
     for b in businesses:
         lat = b.get("lat")
         lon = b.get("lon")
@@ -97,21 +108,10 @@ def get_businesses_with_district(
             result.append({**b, "district": None})
             continue
         point = Point(lon, lat)
+        candidate_indices = tree.query(point, predicate="within")
         district = None
-        for feat in features:
-            geom = feat.get("geometry")
-            if not geom:
-                continue
-            try:
-                poly = shape(geom)
-                if poly.contains(point):
-                    props = feat.get("properties") or {}
-                    district = props.get("stadtteil") or props.get("district")
-                    if district:
-                        district = str(district).strip()
-                    break
-            except Exception:
-                continue
+        if candidate_indices.size > 0:
+            district = district_list[int(candidate_indices[0])][0]
         result.append({**b, "district": district})
     return result
 
@@ -172,12 +172,17 @@ def run_district_analysis(
             "error": "Kein Stadtteil für diese Adresse gefunden (außerhalb Hamburg?).",
         }
 
-    # Load businesses and assign district
+    # Load businesses and assign district (support both array and { metadata, electricians } format)
     businesses = []
     if businesses_path and businesses_path.exists():
         with open(businesses_path, encoding="utf-8") as f:
             raw = json.load(f)
-        businesses = raw if isinstance(raw, list) else []
+        if isinstance(raw, list):
+            businesses = raw
+        elif isinstance(raw, dict) and "electricians" in raw:
+            businesses = raw["electricians"]
+        else:
+            businesses = []
 
     # Assign district to each business and filter by the resolved district name
     with_district = get_businesses_with_district(businesses, geojson)

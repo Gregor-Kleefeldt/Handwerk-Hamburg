@@ -1,9 +1,10 @@
 """
 FastAPI app: serves the White-Spot Map dashboard and the scored GeoJSON.
+
+Requires the handwerk_hamburg package to be installed (e.g. pip install -e . from project root).
 """
 
 import asyncio
-import sys
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -11,12 +12,9 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-# Paths relative to this file
+# Paths relative to this file (app runs from project root)
 APP_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = APP_DIR.parent
-# Ensure handwerk_hamburg can be imported when running uvicorn from project root
-if str(PROJECT_ROOT / "src") not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT / "src"))
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 # Scored GeoJSON for electricians (MVP)
 GEOJSON_PATH = PROCESSED_DIR / "white_spot_electrician.geojson"
