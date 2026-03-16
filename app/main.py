@@ -35,6 +35,10 @@ ALKIS_STADTTEILE_PATH = PROCESSED_DIR / "alkis_stadtteile.geojson"
 # Electricians list for address-based district analysis
 ELECTRICIANS_PATH = PROCESSED_DIR / "electricians.json"
 
+# Business locations loaded once at startup for nearest-business search (not per request)
+from handwerk_hamburg.data_loader import load_business_locations
+BUSINESSES: list[dict] = load_business_locations(PROCESSED_DIR)
+
 # In-memory rate limit: per-IP timestamps for Nominatim-backed endpoints (pruned each check)
 _rate_limit_store: dict[str, list[float]] = {}
 
@@ -144,6 +148,47 @@ async def address_suggestions(request: Request, q: str = ""):
     raw = await asyncio.to_thread(nominatim_search, q.strip(), 8)
     # Return list of { "label": "Street, City", "display_name": "..." } – label for dropdown, display_name for analysis
     return [{"label": r.get("label", r["display_name"]), "display_name": r["display_name"]} for r in raw]
+
+
+@app.get("/nearest_businesses")
+async def nearest_businesses(
+    request: Request,
+    address: str = "",
+    n: int = 5,
+    trade: str | None = None,
+):
+    """
+    Geocode the given address, then return the n nearest businesses (optionally filtered by trade).
+    Response includes input address, (lat, lon), and results with distance_m in meters.
+    """
+    _check_rate_limit(request)
+    address = address.strip()
+    if not address:
+        raise HTTPException(status_code=400, detail="Bitte eine Adresse angeben.")
+    if len(address) > MAX_ADDRESS_ANALYSIS_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Adresse zu lang (max. {MAX_ADDRESS_ANALYSIS_LENGTH} Zeichen).",
+        )
+    from handwerk_hamburg.geocoding import geocode_address_with_fallbacks
+    from handwerk_hamburg.nearest import get_nearest_businesses
+
+    coords = await asyncio.to_thread(geocode_address_with_fallbacks, address)
+    if coords is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Adresse konnte nicht gefunden werden.",
+        )
+    lat, lon = coords
+    # Clamp n to a sensible range
+    n = max(1, min(50, n))
+    results = get_nearest_businesses(lat, lon, BUSINESSES, n=n, trade=trade or None)
+    return {
+        "address": address,
+        "lat": lat,
+        "lon": lon,
+        "results": results,
+    }
 
 
 @app.get("/api/address-analysis")

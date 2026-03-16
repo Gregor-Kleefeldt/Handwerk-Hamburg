@@ -215,8 +215,9 @@ document.getElementById("close-panel").addEventListener("click", hideInfoPanel);
 
 // --- Address search: call API, show district analysis, add user marker ---
 
-// Keep a reference to the user location marker so we can remove or move it
+// Keep a reference to the user location marker and business markers so we can remove or move them
 var userLocationMarker = null;
+var businessMarkers = [];
 
 /**
  * Remove the user location marker from the map if it exists.
@@ -226,6 +227,16 @@ function removeUserLocationMarker() {
     map.removeLayer(userLocationMarker);
     userLocationMarker = null;
   }
+}
+
+/**
+ * Remove all business markers from the map (nearest-business results).
+ */
+function removeBusinessMarkers() {
+  businessMarkers.forEach(function (m) {
+    map.removeLayer(m);
+  });
+  businessMarkers = [];
 }
 
 /**
@@ -274,41 +285,30 @@ function showAddressResultLoading() {
 }
 
 /**
- * Build HTML for the address analysis result and show the result panel.
+ * Build HTML for the nearest-business result and show the result panel.
+ * data: { address, lat, lon, results: [ { id, name, address, lat, lon, distance_m } ] } or { error }.
  */
 function showAddressResult(data) {
   var panel = document.getElementById("address-result-panel");
   var content = document.getElementById("address-result-content");
   if (!panel || !content) return;
   content.innerHTML = "";
+  removeBusinessMarkers();
   if (data.error) {
     var p = document.createElement("p");
     p.className = "error-msg";
     p.textContent = data.error || ADDRESS_ANALYSIS_ERROR_MSG;
     content.appendChild(p);
   } else {
-    var districtTitle = document.createElement("h3");
-    districtTitle.textContent = "Stadtteil: ";
-    var districtSpan = document.createElement("span");
-    districtSpan.className = "district-name";
-    districtSpan.textContent = data.district;
-    districtTitle.appendChild(districtSpan);
-    content.appendChild(districtTitle);
-    var countP = document.createElement("p");
-    countP.textContent = "Anzahl Elektriker: " + data.count;
-    content.appendChild(countP);
-    if (data.businesses && data.businesses.length > 0) {
-      var listLabel = document.createElement("p");
-      listLabel.textContent = "Elektriker in der Nähe:";
-      listLabel.style.marginTop = "0.75rem";
-      listLabel.style.fontWeight = "600";
-      listLabel.style.fontSize = "0.8125rem";
-      content.appendChild(listLabel);
+    var title = document.createElement("h3");
+    title.textContent = "Nächste Betriebe (Entfernung)";
+    content.appendChild(title);
+    if (data.results && data.results.length > 0) {
       var ul = document.createElement("ul");
       ul.className = "business-list";
-      data.businesses.forEach(function (b) {
+      data.results.forEach(function (b) {
         var li = document.createElement("li");
-        li.textContent = b.name || "Unbenannt";
+        li.textContent = (b.name || "Unbenannt") + " — " + (b.distance_m != null ? b.distance_m + " m" : "–");
         if (b.address) {
           var br = document.createElement("br");
           li.appendChild(br);
@@ -320,9 +320,30 @@ function showAddressResult(data) {
         ul.appendChild(li);
       });
       content.appendChild(ul);
+      data.results.forEach(function (b) {
+        var marker = L.circleMarker([b.lat, b.lon], {
+          radius: 8,
+          fillColor: "#059669",
+          color: "#047857",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.9,
+        })
+          .addTo(map)
+          .bindPopup(
+            (b.name || "Unbenannt") +
+              (b.distance_m != null ? " — " + b.distance_m + " m" : "") +
+              (b.address ? "<br><small>" + b.address + "</small>" : "")
+          );
+        businessMarkers.push(marker);
+      });
+    } else {
+      var noResult = document.createElement("p");
+      noResult.textContent = "Keine Betriebe in den Daten gefunden.";
+      content.appendChild(noResult);
     }
-    if (data.user_lat != null && data.user_lon != null) {
-      addUserLocationMarker(data.user_lat, data.user_lon);
+    if (data.lat != null && data.lon != null) {
+      addUserLocationMarker(data.lat, data.lon);
     }
   }
   content.className = "address-result-content";
@@ -337,6 +358,7 @@ function hideAddressResultPanel() {
   var panel = document.getElementById("address-result-panel");
   if (panel) panel.classList.add("hidden");
   removeUserLocationMarker();
+  removeBusinessMarkers();
 }
 
 document.getElementById("close-address-panel").addEventListener("click", hideAddressResultPanel);
@@ -534,7 +556,7 @@ document.getElementById("address-search-btn").addEventListener("click", function
   btn.setAttribute("aria-busy", "true");
   btn.textContent = "Wird geladen…";
   showAddressResultLoading();
-  fetch("/api/address-analysis?address=" + encodeURIComponent(address))
+  fetch("/nearest_businesses?address=" + encodeURIComponent(address) + "&n=5")
     .then(function (res) {
       if (!res.ok) {
         return res.json().then(function (body) {
@@ -552,7 +574,7 @@ document.getElementById("address-search-btn").addEventListener("click", function
     })
     .catch(function (err) {
       showAddressResult({ error: ADDRESS_ANALYSIS_ERROR_MSG });
-      console.error("Address analysis failed", err);
+      console.error("Nearest businesses request failed", err);
     })
     .finally(function () {
       btn.disabled = false;

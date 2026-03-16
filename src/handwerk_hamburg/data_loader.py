@@ -9,7 +9,7 @@ from pathlib import Path
 import requests
 from shapely.geometry import shape
 
-from handwerk_hamburg.config import OVERPASS_URL, HAMBURG_BBOX, TRADES, get_raw_dir
+from handwerk_hamburg.config import OVERPASS_URL, HAMBURG_BBOX, TRADES, get_raw_dir, get_processed_dir
 
 
 def load_geojson(path: Path | None = None) -> dict:
@@ -171,6 +171,49 @@ def plz_centroids(geojson_path: Path | None = None) -> dict[str, tuple[float, fl
             result[str(plz).strip()] = (float(c.x), float(c.y))
         except Exception:
             continue
+    return result
+
+
+def load_business_locations(processed_dir: Path | None = None) -> list[dict]:
+    """
+    Load all businesses with coordinates from processed data (e.g. electricians.json).
+
+    Call once at application startup; returns a list of records with id, name, address,
+    lat, lon, and trade. Supports both { "electricians": [...] } and raw list format.
+
+    Args:
+        processed_dir: Directory containing electricians.json. If None, uses get_processed_dir().
+
+    Returns:
+        List of dicts with keys: id, name, address, lat, lon, trade. Empty list if file missing.
+    """
+    base = processed_dir if processed_dir is not None else get_processed_dir()
+    path = base / "electricians.json"
+    if not path.exists():
+        return []
+    with open(path, encoding="utf-8") as f:
+        raw = json.load(f)
+    # Support wrapper format { metadata, electricians } or raw list
+    if isinstance(raw, list):
+        items = raw
+    elif isinstance(raw, dict) and "electricians" in raw:
+        items = raw["electricians"]
+    else:
+        return []
+    result = []
+    for i, b in enumerate(items):
+        lat = b.get("lat")
+        lon = b.get("lon")
+        if lat is None or lon is None:
+            continue
+        result.append({
+            "id": b.get("id") or f"electrician_{i}",
+            "name": b.get("name"),
+            "address": b.get("address"),
+            "lat": float(lat),
+            "lon": float(lon),
+            "trade": b.get("trade", "electrician"),
+        })
     return result
 
 
